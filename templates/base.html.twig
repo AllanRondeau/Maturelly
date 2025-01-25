@@ -1,19 +1,44 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Antic+Slab&family=Nunito&display=swap" rel="stylesheet">
+</head>
+<body class="font-nunito bg-secondary h-dvh text-white">
+<nav class="fixed top-0 w-full flex justify-between items-center px-10 pt-2">
+    <div class="w-2/12">
+        <a href="{{ path('app_home') }}">
+            <img src="{{ asset('assets/img/maturelly-dark-logo.png') }}" alt="maturelly logo" />
+        </a>
+    </div>
+    <ul class="flex space-x-6 text-xl">
+        {% if is_granted('ROLE_ADMIN') %}
+            <li><a href="{{ path('admin') }}">Admin</a></li>
+        {% endif %}
+        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+            <li><a href="{{ path('app_logout') }}">Déconnexion</a></li>
+        {% else %}
+            <li>
+                <a href="{{ path('app_login') }}"
+                   class="text-white border border-white> rounded-sm py-1 px-2 hover:px-3 transition-all duration-200 hover:-mx-1">
+                    Connexion
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+</nav>
+{% block body %}{% endblock %}
+</body>
 </html>
