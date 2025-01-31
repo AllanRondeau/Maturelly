@@ -1,19 +1,88 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Welcome!{% endblock %}</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    {% block stylesheets %}
+        {{ encore_entry_link_tags('app') }}
+    {% endblock %}
 
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-            {% block importmap %}{{ importmap('app') }}{% endblock %}
-        {% endblock %}
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+        {% block importmap %}{{ importmap('app') }}{% endblock %}
+    {% endblock %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Antic+Slab&family=Nunito&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+</head>
+<body class="font-nunito bg-secondary h-dvh text-white">
+<nav class="fixed top-0 w-full z-10 text-white px-10 py-2 flex justify-between items-center">
+    <div class="w-2/12">
+        <a href="{{ path('app_home') }}">
+            <img src="{{ asset('assets/img/maturelly-dark-logo.png') }}" alt="maturelly logo" />
+        </a>
+    </div>
+
+    <ul class="hidden md:flex space-x-6 text-xl">
+        {% if is_granted('ROLE_ADMIN') %}
+            <li><a href="{{ path('admin') }}">Admin</a></li>
+        {% endif %}
+        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+            <li>
+                <a href="{{ path('app_logout') }}"
+                   class="text-white border border-primary rounded-sm py-1 px-2 hover:px-3 transition-all duration-200 hover:-mx-1 hover:text-primary">
+                    Déconnexion
+                </a>
+            </li>
+        {% else %}
+            <li>
+                <a href="{{ path('app_login') }}"
+                   class="text-white border border-white rounded-sm py-1 px-2 hover:px-3 transition-all duration-200 hover:-mx-1">
+                    Connexion
+                </a>
+            </li>
+        {% endif %}
+    </ul>
+
+    <button id="burger-menu" class="md:hidden text-3xl">
+        <span class="material-icons">menu</span>
+    </button>
+
+    <div id="mobile-menu" class="fixed top-0 left-0 w-full h-full bg-secondary bg-opacity-90 hidden flex-col items-center justify-center space-y-6 text-xl">
+        <button id="close-menu" class="absolute top-4 right-6 text-4xl">
+            <span class="material-icons">close</span>
+        </button>
+        <div class="flex flex-col justify-center items-center h-full">
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin') }}">Admin</a>
+            {% endif %}
+            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                <a href="{{ path('app_logout') }}" class="border border-primary rounded-sm py-1 px-4 hover:bg-primary hover:text-white transition">
+                    Déconnexion
+                </a>
+            {% else %}
+                <a href="{{ path('app_login') }}" class="border-b border-white rounded-sm py-1 px-4 hover:bg-white hover:text-gray-900 transition">
+                    Connexion
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+{% block body %}{% endblock %}
+</body>
+<script>
+  document.getElementById('burger-menu').addEventListener('click', function () {
+    document.getElementById('mobile-menu').classList.remove('hidden');
+  });
+
+  document.getElementById('close-menu').addEventListener('click', function () {
+    document.getElementById('mobile-menu').classList.add('hidden');
+  });
+</script>
 </html>
