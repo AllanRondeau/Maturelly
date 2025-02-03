@@ -4,6 +4,8 @@ namespace App\Entity;
 
 use App\Entity\Traits\TimestampableTrait;
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
 use Symfony\Bridge\Doctrine\Types\UuidType;
@@ -39,6 +41,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    /**
+     * @var Collection<int, Chat>
+     */
+    #[ORM\OneToMany(targetEntity: Chat::class, mappedBy: 'user1')]
+    private Collection $chats;
+
+    /**
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender')]
+    private Collection $messages;
+
+    #[ORM\Column(length: 255, nullable: true, options: ['default' => null])]
+    private ?string $gender = null;
+
+    public function __construct()
+    {
+        $this->chats = new ArrayCollection();
+        $this->messages = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -111,7 +134,76 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Chat>
+     */
+    public function getChats(): Collection
+    {
+        return $this->chats;
+    }
+
+    public function addChat(Chat $chat): static
+    {
+        if (!$this->chats->contains($chat)) {
+            $this->chats->add($chat);
+            $chat->setUser1($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChat(Chat $chat): static
+    {
+        if ($this->chats->removeElement($chat)) {
+            if ($chat->getUser1() === $this) {
+                $chat->setUser1(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): static
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages->add($message);
+            $message->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): static
+    {
+        if ($this->messages->removeElement($message)) {
+            if ($message->getSender() === $this) {
+                $message->setSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getGender(): ?string
+    {
+        return $this->gender;
+    }
+
+    public function setGender(string $gender): static
+    {
+        $this->gender = $gender;
+
+        return $this;
     }
 }
