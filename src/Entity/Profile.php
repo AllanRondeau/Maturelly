@@ -2,7 +2,6 @@
 
 namespace App\Entity;
 
-use App\Enum\Genders;
 use App\Repository\ProfileRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -23,9 +22,6 @@ class Profile
     #[ORM\Column(length: 255)]
     private ?string $familyName = null;
 
-    #[ORM\Column(enumType: Genders::class)]
-    private ?Genders $gender = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $profilePicture = null;
 
@@ -43,9 +39,6 @@ class Profile
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
-
-    #[ORM\Column]
-    private ?int $age = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_MUTABLE)]
     private ?\DateTimeInterface $birthday = null;
@@ -97,18 +90,6 @@ class Profile
     public function setFamilyName(string $familyName): static
     {
         $this->familyName = $familyName;
-
-        return $this;
-    }
-
-    public function getGender(): ?Genders
-    {
-        return $this->gender;
-    }
-
-    public function setGender(Genders $gender): static
-    {
-        $this->gender = $gender;
 
         return $this;
     }
@@ -181,18 +162,6 @@ class Profile
     public function setDescription(?string $description): static
     {
         $this->description = $description;
-
-        return $this;
-    }
-
-    public function getAge(): ?int
-    {
-        return $this->age;
-    }
-
-    public function setAge(int $age): static
-    {
-        $this->age = $age;
 
         return $this;
     }

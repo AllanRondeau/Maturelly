@@ -28,12 +28,6 @@
         </div>
 
         <div class="flex flex-col w-4/5 md:w-3/5 lg:w-2/5 justify-start text-lg">
-            {{ form_label(profileForm.gender) }}
-            {{ form_widget(profileForm.gender, {'attr': {'class': 'bg-secondary border border-white rounded-sm px-2 py-1 text-xl md:text-md'}}) }}
-            {{ form_errors(profileForm.gender) }}
-        </div>
-
-        <div class="flex flex-col w-4/5 md:w-3/5 lg:w-2/5 justify-start text-lg">
             {{ form_label(profileForm.profilePicture) }}
             {% if profile.profilePicture %}
                 <p>Image actuelle:</p>
@@ -71,14 +65,8 @@
 
         <div class="flex flex-col w-4/5 md:w-3/5 lg:w-2/5 justify-start text-lg">
             {{ form_label(profileForm.description) }}
-            {{ form_widget(profileForm.description, {'attr': {'class': 'bg-transparent border border-white rounded-sm px-2 py-1 text-xl md:text-md', 'placeholder': 'Description'}}) }}
+            {{ form_widget(profileForm.description, {'attr': {'class': 'bg-transparent border border-white rounded-sm px-2 py-1 text-xl md:text-md h-64', 'placeholder': 'Description'}}) }}
             {{ form_errors(profileForm.description) }}
-        </div>
-
-        <div class="flex flex-col w-4/5 md:w-3/5 lg:w-2/5 justify-start text-lg">
-            {{ form_label(profileForm.age) }}
-            {{ form_widget(profileForm.age, {'attr': {'class': 'bg-transparent border border-white rounded-sm px-2 py-1 text-xl md:text-md', 'placeholder': 'Âge'}}) }}
-            {{ form_errors(profileForm.age) }}
         </div>
 
         <div class="flex flex-col w-4/5 md:w-3/5 lg:w-2/5 justify-start text-lg">
