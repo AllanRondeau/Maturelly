@@ -74,6 +74,7 @@ class ProfileFormType extends AbstractType
         ->add('country', CountryType::class, [
             'label' => 'Pays',
             'placeholder' => 'Votre pays',
+            'preferred_choices' => ['FR'],
             'constraints' => [
                 new Assert\NotBlank(),
                 new Assert\Length(['max' => 50]),

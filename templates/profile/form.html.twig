@@ -15,7 +15,7 @@
             {% endfor %}
         </div>
 
-        <div class="flex flex-col w-3/5 md:w-3/5 lg:w-2/5 justify-start text-lg">
+        <div class="flex flex-col w-4/5 md:w-3/5 lg:w-2/5 justify-start text-lg">
             {{ form_label(profileForm.firstName) }}
             {{ form_widget(profileForm.firstName, {'attr': {'class': 'bg-transparent border border-white rounded-sm px-2 py-1 text-xl md:text-md', 'placeholder': 'Prénom'}}) }}
             {{ form_errors(profileForm.firstName) }}

@@ -12,27 +12,39 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Uid\Uuid;
 
 class ProfileController extends AbstractController
 {
 
-    #[Route ('/profile', name: 'app_profile')]
-    public function profile(EntityManagerInterface $entityManager): Response
+    #[Route ('/profile/{code?}', name: 'app_profile')]
+    public function profile(?string $code, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
+
+        if ($code === null) {
+            if (!$user) {
+                return $this->redirectToRoute('app_login');
+            }
+
+            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
+
+            if (!$profile) {
+                return $this->redirectToRoute('app_profile_edit'); 
+            }
+        } else {
+            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['code' => $code]);
+    
+            if (!$profile) {
+                return $this->redirectToRoute('app_home');
+            }
         }
 
-        $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
-        if (!$profile) {
-            return $this->redirectToRoute('app_profile_edit');
-        }
-
-        return $this->render('profile/profile.html.twig', [
-            'profile' => $profile,
-        ]);
-    }
+    return $this->render('profile/profile.html.twig', [
+        'profile' => $profile,
+        'IsCurrentUserProfile' => $profile->getUser() === $user,
+    ]);
+}
 
     #[Route('/profile-edit', name: 'app_profile_edit')]
     public function profileCreation(Request $request, EntityManagerInterface $entityManager): Response
@@ -112,6 +124,9 @@ class ProfileController extends AbstractController
     
                     $profile->setProfilePicture($newProfilePictureFilename);
                 }
+
+                $uuid = Uuid::v7();
+                $profile->setCode($uuid->toString());
     
                 $entityManager->persist($profile);
                 $entityManager->flush();
