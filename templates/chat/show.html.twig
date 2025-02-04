@@ -1,0 +1,137 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+<div class="relative mt-24">
+    <div class="flex justify-center">
+        <h1 class="fixed top-16 flex m-auto justify-center text-3xl">
+            {% if chat.user1.id == app.user.id %}
+                {{ chat.user2.email }}
+            {% else %}
+                {{ chat.user1.email }}
+            {% endif %}
+        </h1>
+    </div>
+
+    <div id="chat-container" class="space-y-4 pb-24 flex flex-col flex-1 h-full overflow-y-auto p-4 rounded-lg shadow-sm">
+        {% for message in messages %}
+            <div class="flex space-x-4 {{ message.sender.id == app.user.id ? 'justify-end' : 'justify-start' }}">
+                {% if message.sender.id == app.user.id %}
+                    <div class="flex flex-col items-end">
+                        <div class="bg-blue-500 text-white p-3 rounded-lg max-w-xs">
+                            {{ message.content }}
+                        </div>
+                        <div class="text-xs text-gray-400">{{ message.createdAt|date('d/m H:i') }}</div>
+                    </div>
+                {% else %}
+                    <div class="flex flex-col items-start">
+                        <div class="bg-gray-300 text-gray-800 p-3 rounded-lg max-w-xs">
+                            {{ message.content }}
+                        </div>
+                        <div class="text-xs text-gray-400">{{ message.createdAt|date('d/m H:i') }}</div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+
+    <form id="messageForm" method="post" class="fixed bottom-5 flex justify-center items-center w-full">
+        {{ form_start(form) }}
+        {{ form_widget(form.content, {'attr': {'class': 'w-2/3 rounded-md text-secondary py-1 px-2', 'placeholder': 'Votre message'}}) }}
+        <button type="submit" class="bg-primary rounded-sm ml-4 h-fit px-2 py-1 hover:px-3 transition-all duration-200">Envoyer</button>
+        {{ form_end(form) }}
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+    {{ parent() }}
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const chatContainer = document.getElementById('chat-container');
+        const messageForm = document.getElementById('messageForm');
+
+        const topicUrl = new URL("{{ mercureUrl }}");
+        topicUrl.searchParams.append('topic', 'chat/{{ chat.id }}');
+
+        const eventSource = new EventSource(topicUrl, {
+          withCredentials: true
+        });
+
+        console.log('Connexion au topic:', topicUrl.toString());
+
+        eventSource.onopen = () => {
+          console.log('Connexion Mercure établie');
+        };
+
+        eventSource.onmessage = (event) => {
+          console.log('Message reçu brut:', event);
+          console.log('Données du message:', event.data);
+          const data = JSON.parse(event.data);
+          appendMessage(data);
+        };
+
+        eventSource.onerror = (error) => {
+          console.error('Erreur EventSource:', error);
+          setTimeout(() => {
+            eventSource.close();
+            new EventSource(topicUrl, { withCredentials: true });
+          }, 3000);
+        };
+
+        function appendMessage(data) {
+          const messageDiv = document.createElement('div');
+          const isCurrentUser = data.sender.id === "{{ app.user.id }}";
+
+          messageDiv.className = `flex space-x-4 ${isCurrentUser ? 'justify-end' : 'justify-start'}`;
+
+          messageDiv.innerHTML = isCurrentUser ? `
+            <div class="flex flex-col items-end">
+                <div class="bg-blue-500 text-white p-3 rounded-lg max-w-xs">
+                    ${data.content}
+                </div>
+                <div class="text-xs text-gray-400">${new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</div>
+            </div>
+        ` : `
+            <div class="flex flex-col items-start">
+                <div class="bg-gray-300 text-gray-800 p-3 rounded-lg max-w-xs">
+                    ${data.content}
+                </div>
+                <div class="text-xs text-gray-400">${new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'})}</div>
+            </div>
+        `;
+          chatContainer.appendChild(messageDiv);
+          scrollToBottom();
+        }
+
+        messageForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+
+          const formData = new FormData(messageForm);
+          try {
+            const response = await fetch(messageForm.action, {
+              method: 'POST',
+              body: formData,
+              headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+              }
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              console.log('Message envoyé:', result);
+              messageForm.reset();
+            } else {
+              console.error('Erreur envoi:', response.status);
+            }
+          } catch (error) {
+            console.error('Erreur:', error);
+          }
+        });
+
+        function scrollToBottom() {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        scrollToBottom();
+      });
+    </script>
+{% endblock %}
