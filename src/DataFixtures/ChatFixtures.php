@@ -4,6 +4,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Chat;
 use App\Entity\User;
+use App\Enum\Genders;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
@@ -18,7 +19,7 @@ class ChatFixtures extends Fixture implements DependentFixtureInterface
             throw new \Exception('L\'utilisateur "man@maturelly.com" n\'existe pas.');
         }
 
-        $femaleUsers = $manager->getRepository(User::class)->findBy(['gender' => 'f']);
+        $femaleUsers = $manager->getRepository(User::class)->findBy(['gender' => Genders::FEMALE]);
 
         if (count($femaleUsers) < 10) {
             throw new \Exception('Il n\'y a pas assez d\'utilisateurs féminins pour créer 10 chats.');

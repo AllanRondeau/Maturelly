@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Profil{% endblock %}
+
+{% block body %}
+    <div class="flex flex-col justify-center items-center space-y-4 mt-24">
+        <div class="flex flex-row flex-nowrap justify-around gap-20 items-center">
+            <h1 class="h3 mb-3 text-white text-6xl sm:text-7xl md:text-5xl border-b border-primary">{{profile.firstName}} {{profile.familyName}}</h1> 
+            {% if IsCurrentUserProfile %}
+                <a href="{{ path('app_profile_edit') }}" class="text-xl border rounded-md border-primary px-2 py-1 hover:px-3 hover:py-1 hover:-mx-1 transition-all duration-200">Modifier le profil</a>
+            {% endif %}
+        </div>
+
+        {% if profile.profilePicture %}
+            <img src="{{ asset('uploads/profile_images/' ~ profile.profilePicture) }}" alt="Existing Image" width="350" height="350" class="rounded-sm">
+        {% else %}
+            <img src="{{ asset('assets/img/profile-default.webp') }}" alt="Default Image" width="350" height="350" class="rounded-sm">
+        {% endif %}
+
+        <p class="text-xl">
+            {{ profile.birthday.diff(date()).y }} ans
+            <span class="text-3xl">
+                {% if profile.user.gender == "male" %}
+                    ♂
+                {% else %}
+                    ♀
+                {% endif %}
+            </span>
+        </p>
+
+        {% if profile.description %}
+            <p class="text-lg w-4/5">{{ profile.description }}</p>
+        {% endif %}
+
+        {% if profile.hobbies|length > 0 %}
+            <p class="text-xl font-semibold mt-4">Loisirs :</p>
+            <ul class="text-lg flex flex-row gap-3 justify-center">
+                {% for hobby in profile.hobbies %}
+                    <li class="border rounded-md border-primary px-2 py-1">{{ hobby.name }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% if profile.images|length > 0 %}
+            <div class="flex flex-wrap gap-4 justify-center">
+                {% for image in profile.images %}
+                    <img src="{{ asset('uploads/profile_images/' ~ image.fileName) }}" alt="Profile Image" width="500" height="500" class="rounded-md">
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+    </div>
+
+{% endblock %}

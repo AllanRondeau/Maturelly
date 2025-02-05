@@ -15,6 +15,10 @@
             {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'bg-transparent border border-white rounded-sm px-2 py-1 md:text-md', 'placeholder': 'mot de passe'}}) }}
         </label>
 
+        <label class="flex w-4/5 flex-col justify-start text-lg md:w-3/5 lg:w-2/5" for="registrationForm_plainPassword">Vous êtes un(e)...
+            {{ form_widget(registrationForm.gender, {'attr': {'class': 'bg-secondary border border-white rounded-sm px-2 py-1 md:text-md', 'placeholder': 'genre'}}) }}
+        </label>
+
         <div class="flex w-4/5 md:w-3/5 lg:w-2/5 justify-start items-center space-x-2">
             {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'w-5 h-5 accent-primary cursor-pointer'}}) }}
             <label for="registrationForm_agreeTerms" class="text-white text-lg lg:text-sm">J'accepte les conditions</label>

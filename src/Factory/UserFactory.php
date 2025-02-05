@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\User;
+use App\Enum\Genders;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
@@ -32,7 +33,7 @@ final class UserFactory extends PersistentProxyObjectFactory
     {
         return [
             'email' => self::faker()->unique()->safeEmail(),
-            'gender' => self::faker()->text(255),
+            'gender' => random_int(0,1) === 0 ? Genders::MALE : Genders::FEMALE,
             'password' => 'passsword',
             'roles' => ['ROLE_USER'],
         ];
