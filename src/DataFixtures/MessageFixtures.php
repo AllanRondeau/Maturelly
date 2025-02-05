@@ -26,6 +26,7 @@ class MessageFixtures extends Fixture implements DependentFixtureInterface
                 $message->setSender($sender);
 
                 $message->setContent($faker->sentence());
+                $message->setCreatedAt(new \DateTime());
 
                 $manager->persist($message);
             }
