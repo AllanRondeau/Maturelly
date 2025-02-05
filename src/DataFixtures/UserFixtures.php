@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Enum\Genders;
+use App\Factory\ProfileFactory;
 use App\Factory\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Bundle\FixturesBundle\FixtureGroupInterface;
