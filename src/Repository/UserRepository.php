@@ -63,41 +63,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 }
     
 
-    public function findNearbyUsers(User $user, float $maxDistance = 50): array
-    {
-        $lat = $user->getLatitude();
-        $lon = $user->getLongitude();
-        
-        $rsm = new ResultSetMapping();
-        $rsm->addEntityResult(User::class, 'u');
-        $rsm->addFieldResult('u', 'id', 'id');
-        $rsm->addFieldResult('u', 'email', 'email');
-        $rsm->addFieldResult('u', 'latitude', 'latitude');
-        $rsm->addFieldResult('u', 'longitude', 'longitude');
-        
-        $query = $this->getEntityManager()->createNativeQuery(
-            'SELECT u.*, 
-                (6371 * acos(cos(radians(:lat)) * cos(radians(latitude)) * 
-                cos(radians(longitude) - radians(:lon)) + 
-                sin(radians(:lat)) * sin(radians(latitude)))) AS distance
-            FROM "user" u
-            WHERE u.id != :userId
-            AND u.gender != :gender
-            HAVING distance < :maxDistance
-            ORDER BY distance',
-            $rsm
-        );
-
-        $query->setParameters([
-            'lat' => $lat,
-            'lon' => $lon,
-            'userId' => $user->getId(),
-            'gender' => $user->getGender(),
-            'maxDistance' => $maxDistance
-        ]);
-
-        return $query->getResult();
-    }
 
     //    /**
     //     * @return User[] Returns an array of User objects
