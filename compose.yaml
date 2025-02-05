@@ -1,7 +1,7 @@
 services:
   ###> doctrine/doctrine-bundle ###
   database:
-    image: postgres:${POSTGRES_VERSION:-16}-alpine
+    image: postgres:${POSTGRES_VERSION:-17.2}-alpine
     environment:
       POSTGRES_DB: ${POSTGRES_DB:-database}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
