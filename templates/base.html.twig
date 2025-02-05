@@ -21,7 +21,7 @@
 
 </head>
 <body class="font-nunito bg-secondary h-dvh text-white">
-<nav class="fixed top-0 w-full z-10 text-white px-10 py-2 flex justify-between items-center">
+<nav class="fixed top-0 w-full z-10 bg-secondary text-white px-10 py-2 flex justify-between items-center">
     <div class="w-2/12">
         <a href="{{ path('app_home') }}">
             <img src="{{ asset('assets/img/maturelly-dark-logo.png') }}" alt="maturelly logo" />
@@ -75,6 +75,7 @@
 </nav>
 
 {% block body %}{% endblock %}
+{% block scripts %}{% endblock %}
 </body>
 <script>
   document.getElementById('burger-menu').addEventListener('click', function () {
