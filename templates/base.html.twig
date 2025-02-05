@@ -34,7 +34,7 @@
         {% endif %}
         {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
             <li>
-                {% if app.user.profile.profilePicture %}
+                {% if app.user.profile is defined and app.user.profile is not null %}
                     <a class="flex flex-row flex-nowrap gap-2 hover:underline" href="{{ path('app_profile') }}"><img src="{{ asset('uploads/profile_images/' ~ profile.profilePicture) }}" alt="Profile" class="w-10 h-10 rounded-full object-cover"><span>{{ app.user.email }}</span></a>
                 {% elseif app.user.profile %}
                     <a class="flex flex-row flex-nowrap gap-2 hover:underline" href="{{ path('app_profile') }}"><img src="{{ asset('assets/img/profile-default.webp') }}" alt="Profile" class="w-10 h-10 rounded-full object-cover"><span>{{ app.user.email }}</span></a>
