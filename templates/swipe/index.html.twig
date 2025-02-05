@@ -117,186 +117,197 @@
 {% block javascripts %}
 {{ parent() }}
 <script>
-let currentProfileIndex = 0;
-let profiles = [];
-let isDragging = false;
-let startX = 0;
-let currentX = 0;
-
-function createConfetti() {
-   const colors = ['#FF577F', '#FF884B', '#FFD384', '#FFF9B0'];
-   const confettiCount = 100;
-   const container = document.getElementById('confetti-container');
-   
-   container.innerHTML = '';
-   for(let i = 0; i < confettiCount; i++) {
-       const confetti = document.createElement('div');
-       confetti.className = 'confetti confetti-animation';
-       confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-       confetti.style.left = Math.random() * 100 + 'vw';
-       confetti.style.animationDelay = Math.random() * 3 + 's';
-       confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-       container.appendChild(confetti);
-   }
-   
-   setTimeout(() => {
-       container.innerHTML = '';
-   }, 6000);
-}
-
-async function loadProfiles() {
-   try {
-       const response = await fetch('/swipe/all-profiles');
-       const data = await response.json();
-       profiles = data.profiles;
-       displayCurrentProfile();
-   } catch (error) {
-       console.error('Error loading profiles:', error);
-   }
-}
-
-function displayCurrentProfile() {
-   const container = document.getElementById('profile-container');
-   if (currentProfileIndex >= profiles.length) {
-       container.innerHTML = `
-           <div class="text-center py-12 fade-in">
-               <span class="material-icons text-primary text-6xl mb-4">sentiment_satisfied</span>
-               <h2 class="text-2xl text-white font-bold mb-2">Plus de profils disponibles</h2>
-               <p class="text-white/70">Revenez plus tard pour découvrir de nouveaux profils !</p>
-           </div>
-       `;
-       return;
-   }
-   
-   const profile = profiles[currentProfileIndex];
-   document.getElementById('profile-name-age').textContent = `${profile.name}, ${profile.age} ans`;
-   document.getElementById('profile-location').textContent = profile.location;
-   document.getElementById('profile-description').textContent = profile.description;
-   document.getElementById('profile-picture').setAttribute('src', profile.photo);
-}
-
-async function handleLike() {
-   const profile = profiles[currentProfileIndex];
-   const card = document.querySelector('.profile-card');
-
-   try {
-       const response = await fetch(`/swipe/like/${profile.id}`, {
-           method: 'POST',
-           headers: { 'X-Requested-With': 'XMLHttpRequest' }
-       });
-
-       const data = await response.json();
-       card.classList.add('swiped-right');
-       
-       if (data.isMatch) {
-           document.getElementById('matched-name').textContent = profile.name;
-           setTimeout(() => {
-               document.getElementById('match-modal').classList.remove('hidden');
-               createConfetti();
-           }, 500);
-       }
-   } catch (error) {
-       console.error('Error:', error);
-   }
-
-   setTimeout(() => {
-       card.classList.remove('swiped-right');
-       currentProfileIndex++;
-       displayCurrentProfile();
-   }, 300);
-}
-
-async function handleDislike() {
-    const profile = profiles[currentProfileIndex];
-    const card = document.querySelector('.profile-card');
-
-    try {
-        const response = await fetch(`/swipe/dislike/${profile.id}`, {
-            method: 'POST',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
+    let currentProfileIndex = 0;
+    let profiles = [];
+    let isDragging = false;
+    let startX = 0;
+    let currentX = 0;
+    let currentMatchData = null;
+    
+    function createConfetti() {
+        const colors = ['#FF577F', '#FF884B', '#FFD384', '#FFF9B0'];
+        const confettiCount = 100;
+        const container = document.getElementById('confetti-container');
+        
+        container.innerHTML = '';
+        for(let i = 0; i < confettiCount; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti confetti-animation';
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            confetti.style.left = Math.random() * 100 + 'vw';
+            confetti.style.animationDelay = Math.random() * 3 + 's';
+            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+            container.appendChild(confetti);
+        }
+        
+        setTimeout(() => {
+            container.innerHTML = '';
+        }, 6000);
+    }
+    
+    async function loadProfiles() {
+        try {
+            const response = await fetch('/swipe/all-profiles');
+            const data = await response.json();
+            profiles = data.profiles;
+            displayCurrentProfile();
+        } catch (error) {
+            console.error('Error loading profiles:', error);
+        }
+    }
+    
+    function displayCurrentProfile() {
+        const container = document.getElementById('profile-container');
+        if (currentProfileIndex >= profiles.length) {
+            container.innerHTML = `
+                <div class="text-center py-12 fade-in">
+                    <span class="material-icons text-primary text-6xl mb-4">sentiment_satisfied</span>
+                    <h2 class="text-2xl text-white font-bold mb-2">Plus de profils disponibles</h2>
+                    <p class="text-white/70">Revenez plus tard pour découvrir de nouveaux profils !</p>
+                </div>
+            `;
+            return;
+        }
+        
+        const profile = profiles[currentProfileIndex];
+        document.getElementById('profile-name-age').textContent = `${profile.name}, ${profile.age} ans`;
+        document.getElementById('profile-location').textContent = profile.location;
+        document.getElementById('profile-description').textContent = profile.description;
+        document.getElementById('profile-picture').setAttribute('src', profile.photo);
+    }
+    
+    async function handleLike() {
+        const profile = profiles[currentProfileIndex];
+        const card = document.querySelector('.profile-card');
+    
+        try {
+            const response = await fetch(`/swipe/like/${profile.id}`, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+    
+            const data = await response.json();
+            card.classList.add('swiped-right');
+            
+            if (data.isMatch) {
+                currentMatchData = {
+                    name: profile.name,
+                    id: profile.id,
+                    chatId: data.matchedUser.chatId
+                };
+                document.getElementById('matched-name').textContent = profile.name;
+                setTimeout(() => {
+                    document.getElementById('match-modal').classList.remove('hidden');
+                    createConfetti();
+                }, 500);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    
+        setTimeout(() => {
+            card.classList.remove('swiped-right');
+            currentProfileIndex++;
+            displayCurrentProfile();
+        }, 300);
+    }
+    
+    async function handleDislike() {
+        const profile = profiles[currentProfileIndex];
+        const card = document.querySelector('.profile-card');
+    
+        try {
+            const response = await fetch(`/swipe/dislike/${profile.id}`, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+    
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+    
+            card.classList.add('swiped-left');
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    
+        setTimeout(() => {
+            card.classList.remove('swiped-left');
+            currentProfileIndex++;
+            displayCurrentProfile();
+        }, 300);
+    }
+    
+    function initSwipeListeners() {
+        const card = document.querySelector('.profile-card');
+        
+        card.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX;
+            card.style.transition = 'none';
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            currentX = e.pageX;
+            const deltaX = currentX - startX;
+            const rotation = deltaX * 0.1;
+            
+            card.style.transform = `translateX(${deltaX}px) rotate(${rotation}deg)`;
+            
+            // Show indicators
+            if (deltaX < -50) {
+                document.querySelector('.swipe-left-indicator').style.opacity = '1';
+            } else if (deltaX > 50) {
+                document.querySelector('.swipe-right-indicator').style.opacity = '1';
+            } else {
+                document.querySelectorAll('.swipe-left-indicator, .swipe-right-indicator')
+                    .forEach(el => el.style.opacity = '0');
             }
         });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        card.classList.add('swiped-left');
-    } catch (error) {
-        console.error('Error:', error);
+        
+        document.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const deltaX = currentX - startX;
+            card.style.transition = 'transform 0.3s ease';
+            
+            if (deltaX < -100) {
+                handleDislike();
+            } else if (deltaX > 100) {
+                handleLike();
+            } else {
+                card.style.transform = '';
+            }
+            
+            document.querySelectorAll('.swipe-left-indicator, .swipe-right-indicator')
+                .forEach(el => el.style.opacity = '0');
+        });
     }
-
-    setTimeout(() => {
-        card.classList.remove('swiped-left');
-        currentProfileIndex++;
-        displayCurrentProfile();
-    }, 300);
-}
-
-function initSwipeListeners() {
-   const card = document.querySelector('.profile-card');
-   
-   card.addEventListener('mousedown', (e) => {
-       isDragging = true;
-       startX = e.pageX;
-       card.style.transition = 'none';
-   });
-   
-   document.addEventListener('mousemove', (e) => {
-       if (!isDragging) return;
-       
-       currentX = e.pageX;
-       const deltaX = currentX - startX;
-       const rotation = deltaX * 0.1;
-       
-       card.style.transform = `translateX(${deltaX}px) rotate(${rotation}deg)`;
-       
-       // Show indicators
-       if (deltaX < -50) {
-           document.querySelector('.swipe-left-indicator').style.opacity = '1';
-       } else if (deltaX > 50) {
-           document.querySelector('.swipe-right-indicator').style.opacity = '1';
-       } else {
-           document.querySelectorAll('.swipe-left-indicator, .swipe-right-indicator')
-               .forEach(el => el.style.opacity = '0');
-       }
-   });
-   
-   document.addEventListener('mouseup', () => {
-       if (!isDragging) return;
-       isDragging = false;
-       
-       const deltaX = currentX - startX;
-       card.style.transition = 'transform 0.3s ease';
-       
-       if (deltaX < -100) {
-           handleDislike();
-       } else if (deltaX > 100) {
-           handleLike();
-       } else {
-           card.style.transform = '';
-       }
-       
-       document.querySelectorAll('.swipe-left-indicator, .swipe-right-indicator')
-           .forEach(el => el.style.opacity = '0');
-   });
-}
-
-function closeMatchModal() {
-   document.getElementById('match-modal').classList.add('hidden');
-}
-
-function startChat() {
-   window.location.href = '/chat';
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-   loadProfiles();
-   initSwipeListeners();
-   
-   document.querySelector('.like-btn').addEventListener('click', handleLike);
-   document.querySelector('.dislike-btn').addEventListener('click', handleDislike);
-});
+    
+    function closeMatchModal() {
+        document.getElementById('match-modal').classList.add('hidden');
+        currentMatchData = null;
+    }
+    
+    function startChat() {
+        if (currentMatchData && currentMatchData.chatId) {
+            window.location.href = `/chat/${currentMatchData.chatId}`;
+        } else {
+            window.location.href = '/chat';
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProfiles();
+        initSwipeListeners();
+        
+        document.querySelector('.like-btn').addEventListener('click', handleLike);
+        document.querySelector('.dislike-btn').addEventListener('click', handleDislike);
+    });
 </script>
 {% endblock %}

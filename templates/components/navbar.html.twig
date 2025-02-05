@@ -1,0 +1,138 @@
+<nav class="bg-white shadow fixed w-full top-0 z-50">
+    <div class="mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 justify-between">
+            <div class="flex">
+                <div class="flex flex-shrink-0 items-center">
+                    <a href="{{ path('app_home') }}" class="text-2xl font-bold text-primary">Maturelly</a>
+                </div>
+                <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
+                    {% if app.user %}
+                        <a href="{{ path('app_home') }}" 
+                           class="inline-flex items-center px-1 pt-1 text-sm font-medium {{ app.request.get('_route') == 'app_home' ? 'border-b-2 border-primary text-gray-900' : 'text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
+                            Accueil
+                        </a>
+                        
+                        {% if app.user.profile %}
+                            <a href="{{ path('app_swipe') }}"
+                               class="inline-flex items-center px-1 pt-1 text-sm font-medium {{ app.request.get('_route') == 'app_swipe' ? 'border-b-2 border-primary text-gray-900' : 'text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
+                                Découvrir
+                            </a>
+                            
+                            <a href="{{ path('app_chat') }}"
+                               class="inline-flex items-center px-1 pt-1 text-sm font-medium {{ app.request.get('_route') starts with 'app_chat' ? 'border-b-2 border-primary text-gray-900' : 'text-gray-500 hover:border-gray-300 hover:text-gray-700' }}">
+                                Messages
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                {% if app.user %}
+                    <div class="relative ml-3">
+                        <div class="flex space-x-4 items-center">
+                            {% if not app.user.profile %}
+                                <a href="{{ path('app_profile_edit') }}" 
+                                   class="inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90">
+                                    Créer mon profil
+                                </a>
+                            {% else %}
+                                <a href="{{ path('app_profile') }}" 
+                                   class="flex items-center space-x-2 text-gray-500 hover:text-gray-700">
+                                    <span class="material-icons">account_circle</span>
+                                    <span>Mon profil</span>
+                                </a>
+                            {% endif %}
+                            
+                            <a href="{{ path('app_logout') }}" 
+                               class="flex items-center space-x-2 text-gray-500 hover:text-gray-700">
+                                <span class="material-icons">logout</span>
+                                <span>Déconnexion</span>
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="flex space-x-4">
+                        <a href="{{ path('app_login') }}" 
+                           class="text-gray-500 hover:text-gray-700">Connexion</a>
+                        <a href="{{ path('app_register') }}" 
+                           class="inline-flex items-center rounded-md bg-primary px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary/90">
+                            Inscription
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+            
+            <!-- Mobile menu button -->
+            <div class="flex items-center sm:hidden">
+                <button type="button" 
+                        class="mobile-menu-button inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500"
+                        aria-controls="mobile-menu" 
+                        aria-expanded="false">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div class="sm:hidden hidden" id="mobile-menu">
+        <div class="space-y-1 pb-3 pt-2">
+            {% if app.user %}
+                <a href="{{ path('app_home') }}" 
+                   class="block border-l-4 py-2 pl-3 pr-4 text-base font-medium {{ app.request.get('_route') == 'app_home' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700' }}">
+                    Accueil
+                </a>
+                
+                {% if app.user.profile %}
+                    <a href="{{ path('app_swipe') }}"
+                       class="block border-l-4 py-2 pl-3 pr-4 text-base font-medium {{ app.request.get('_route') == 'app_swipe' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700' }}">
+                        Découvrir
+                    </a>
+                    
+                    <a href="{{ path('app_chat') }}"
+                       class="block border-l-4 py-2 pl-3 pr-4 text-base font-medium {{ app.request.get('_route') starts with 'app_chat' ? 'border-primary bg-primary/10 text-primary' : 'border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700' }}">
+                        Messages
+                    </a>
+                    
+                    <a href="{{ path('app_profile') }}"
+                       class="block border-l-4 py-2 pl-3 pr-4 text-base font-medium border-transparent text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700">
+                        Mon profil
+                    </a>
+                {% else %}
+                    <a href="{{ path('app_profile_edit') }}"
+                       class="block border-l-4 border-primary bg-primary/10 py-2 pl-3 pr-4 text-base font-medium text-primary">
+                        Créer mon profil
+                    </a>
+                {% endif %}
+                
+                <a href="{{ path('app_logout') }}"
+                   class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700">
+                    Déconnexion
+                </a>
+            {% else %}
+                <a href="{{ path('app_login') }}"
+                   class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700">
+                    Connexion
+                </a>
+                <a href="{{ path('app_register') }}"
+                   class="block border-l-4 border-transparent py-2 pl-3 pr-4 text-base font-medium text-gray-500 hover:border-gray-300 hover:bg-gray-50 hover:text-gray-700">
+                    Inscription
+                </a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.querySelector('.mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuButton?.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+        const isExpanded = mobileMenuButton.getAttribute('aria-expanded') === 'true';
+        mobileMenuButton.setAttribute('aria-expanded', !isExpanded);
+    });
+});
+</script>

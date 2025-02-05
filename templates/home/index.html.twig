@@ -1,22 +1,128 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello HomeController!{% endblock %}
+{% block title %}Maturelly - Rencontres authentiques{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .hero-section {
+            min-height: calc(100vh - 5rem);
+            background-color: #0A1626;
+            position: relative;
+            overflow: hidden;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating-image {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 1s ease-out forwards;
+        }
+
+        .fade-in-delay-1 {
+            animation-delay: 0.2s;
+        }
+
+        .fade-in-delay-2 {
+            animation-delay: 0.4s;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
+<div class="hero-section flex items-center">
+    <div class="container mx-auto px-6 py-12 flex flex-col md:flex-row items-center justify-between">
+        <!-- Texte et CTA -->
+        <div class="md:w-1/2 text-white space-y-8 fade-in">
+            <h1 class="text-5xl md:text-6xl font-bold mb-6">
+                Welcome to
+                <span class="text-primary hover:text-primary/80 transition-colors duration-300 cursor-pointer">
+                    Maturelly!
+                </span>
+            </h1>
 
-<div class="relative flex justify-center items-center h-full w-full sm:px-10">
-    <div class="w-2/3 flex flex-col justify-center sm:w-1/2 md:w-1/3">
-        <h1 class="text-6xl sm:text-5xl font-bold mb-20 now">Welcome to <span class="text-primary pb-0.5 underline font-bold font-anticSlab tracking-wider">Maturelly!</span></h1>
-        <p class="text-2xl sm:text-xl mb-12 text">
-            Trouvez le match parfait et vivez une expérience authentique avec une femme mûre, prête à partager des moments de complicité et de compréhension.
-        </p>
-        <a href="{{ path('app_register') }}"
-           class="text-lg border border-primary text-center rounded-sm px-3 py-1 hover:py-2 hover:px-4 transition-all duration-200 ">
-            Inscrivez vous maintenant
-        </a>
+            <p class="text-xl text-gray-300 max-w-xl fade-in fade-in-delay-1">
+                Trouvez le match parfait et vivez une expérience authentique avec une femme mûre, 
+                prête à partager des moments de complicité et de compréhension.
+            </p>
+
+            <div class="pt-4 fade-in fade-in-delay-2">
+                {% if app.user %}
+                    {% if app.user.profile %}
+                        <a href="{{ path('app_swipe') }}" 
+                           class="inline-block px-8 py-4 bg-primary text-white rounded-lg text-lg font-semibold hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/20">
+                            Rencontre des femmes mûres
+                        </a>
+                    {% else %}
+                        <a href="{{ path('app_profile_edit') }}" 
+                           class="inline-block px-8 py-4 bg-primary text-white rounded-lg text-lg font-semibold hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/20">
+                            Créer mon profil
+                        </a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ path('app_register') }}" 
+                       class="inline-block px-8 py-4 bg-primary text-white rounded-lg text-lg font-semibold hover:bg-primary/90 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/20">
+                        Inscrivez vous maintenant
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="md:w-1/2 mt-12 md:mt-0 floating-image">
+            <img src="{{ asset('assets/img/landing-illustration.png') }}" 
+                 alt="Illustration de rencontre" 
+                 class="w-full max-w-2xl mx-auto"
+                 draggable="false">
+        </div>
     </div>
-    <div class="absolute -z-10 opacity-15 w-full sm:static sm:z-0 sm:opacity-100 sm:w-1/2 md:w-2/3 sm:-mx-4 md:-mx-6">
-        <img src="{{  asset('assets/img/landing-illustration.png') }}" alt="dating landing illustration" class="w-full"/>
-    </div>
+
+    <div class="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
 </div>
+
+{% if not app.user %}
+    <section class="py-20 bg-secondary/50">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl font-bold text-center text-white mb-16">Pourquoi choisir Maturelly ?</h2>
+            
+            <div class="grid md:grid-cols-3 gap-12">
+                <div class="bg-secondary/40 p-8 rounded-xl backdrop-blur-sm hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-6">
+                        <span class="material-icons text-primary text-3xl">verified_user</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Profils Vérifiés</h3>
+                    <p class="text-gray-300">Tous nos membres sont authentifiés pour garantir des rencontres en toute sécurité.</p>
+                </div>
+
+                <div class="bg-secondary/40 p-8 rounded-xl backdrop-blur-sm hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-6">
+                        <span class="material-icons text-primary text-3xl">favorite</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Matching Intelligent</h3>
+                    <p class="text-gray-300">Notre algorithme vous met en relation avec des profils compatibles avec vos attentes.</p>
+                </div>
+
+                <div class="bg-secondary/40 p-8 rounded-xl backdrop-blur-sm hover:transform hover:scale-105 transition-all duration-300">
+                    <div class="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mb-6">
+                        <span class="material-icons text-primary text-3xl">chat</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-4">Messagerie Sécurisée</h3>
+                    <p class="text-gray-300">Échangez en toute confidentialité avec vos matchs grâce à notre messagerie sécurisée.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endif %}
 {% endblock %}

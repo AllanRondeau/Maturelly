@@ -28,7 +28,13 @@ class SwipeController extends AbstractController
         if (!$currentUser) {
             return $this->redirectToRoute('app_login');
         }
-        // La vue chargera les profils via AJAX
+        
+        // Vérifier si l'utilisateur a un profil
+        if (!$currentUser->getProfile()) {
+            $this->addFlash('warning', 'Vous devez créer votre profil avant de pouvoir découvrir d\'autres personnes.');
+            return $this->redirectToRoute('app_profile_edit');
+        }
+        
         return $this->render('swipe/index.html.twig');
     }
 
@@ -64,15 +70,16 @@ class SwipeController extends AbstractController
     ]);
 }
 
-    #[Route('/like/{id}', name: 'app_swipe_like', methods: ['POST'])]
-    public function like(User $targetUser): JsonResponse
+#[Route('/like/{id}', name: 'app_swipe_like', methods: ['POST'])]
+public function like(User $targetUser): JsonResponse
 {
     $result = $this->matchService->handleLike($this->getUser(), $targetUser);
     return $this->json([
         'isMatch' => $result['isMatch'] ?? false,
         'matchedUser' => $result['isMatch'] ? [
             'name' => explode('@', $targetUser->getEmail())[0],
-            'id' => $targetUser->getId()
+            'id' => $targetUser->getId(),
+            'chatId' => $result['chatId']
         ] : null
     ]);
 }
