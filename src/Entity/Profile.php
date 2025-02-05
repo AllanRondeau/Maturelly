@@ -62,6 +62,9 @@ class Profile
     #[ORM\Column(length: 255)]
     private ?string $code = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $postalCode = null;
+
     public function __construct()
     {
         $this->hobbies = new ArrayCollection();
@@ -261,6 +264,18 @@ class Profile
     public function setCode(string $code): static
     {
         $this->code = $code;
+
+        return $this;
+    }
+
+    public function getPostalCode(): ?string
+    {
+        return $this->postalCode;
+    }
+
+    public function setPostalCode(string $postalCode): static
+    {
+        $this->postalCode = $postalCode;
 
         return $this;
     }

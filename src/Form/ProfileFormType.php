@@ -26,7 +26,7 @@ class ProfileFormType extends AbstractType
                 new Assert\NotBlank(['message' => 'Le prénom est requis.']),
                 new Assert\Length([
                     'max' => 50, 
-                    'maxMessage' => 'Le prénom ne peut pas dépasser 50 caractères.',
+                    'maxMessage' => 'Le prénom ne peut pas dépasser {{ limit }} caractères.',
                 ]),
             ],
         ])
@@ -34,7 +34,9 @@ class ProfileFormType extends AbstractType
             'label' => 'Nom de famille',
             'constraints' => [
                 new Assert\NotBlank(),
-                new Assert\Length(['max' => 50]),
+                new Assert\Length([
+                    'max' => 50,
+                    'maxMessage' => 'Le nom de famille ne peut pas dépasser {{ limit }} caractères.',]),
             ],
         ])
         ->add('profilePicture', FileType::class, [
@@ -53,22 +55,45 @@ class ProfileFormType extends AbstractType
         ->add('address', TextType::class, [
             'label' => 'Adresse',
             'constraints' => [
-                new Assert\NotBlank(),
-                new Assert\Length(['max' => 50]),
+                new Assert\NotBlank(['message' => 'L\'adresse ne peut pas être vide.']),
+                new Assert\Length([
+                    'max' => 50,
+                    'maxMessage' => 'L\'adresse ne peut pas dépasser {{ limit }} caractères.',
+                ]),
             ],
         ])
         ->add('city', TextType::class, [
             'label' => 'Ville',
             'constraints' => [
-                new Assert\NotBlank(),
-                new Assert\Length(['max' => 50]),
+                new Assert\NotBlank(['message' => 'La ville ne peut pas être vide.']),
+                new Assert\Length([
+                    'max' => 50,
+                    'maxMessage' => 'Le nom de la ville ne peut pas dépasser {{ limit }} caractères.',
+                ]),
+            ],
+        ])
+        ->add('postalCode', TextType::class, [
+            'label' => 'Code postal',
+            'constraints' => [
+                new Assert\NotBlank(['message' => 'Le code postal ne peut pas être vide.']),
+                new Assert\Length([
+                    'max' => 50,
+                    'maxMessage' => 'Le code postal ne peut pas dépasser {{ limit }} caractères.',
+                ]),
+                new Assert\Regex([
+                    'pattern' => '/^\d+$/',
+                    'message' => 'Le code postal doit contenir uniquement des chiffres.',
+                ]),
             ],
         ])
         ->add('region', TextType::class, [
             'label' => 'Région',
             'constraints' => [
-                new Assert\NotBlank(),
-                new Assert\Length(['max' => 50]),
+                new Assert\NotBlank(['message' => 'La région ne peut pas être vide.']),
+                new Assert\Length([
+                    'max' => 50,
+                    'maxMessage' => 'Le nom de la région ne peut pas dépasser {{ limit }} caractères.',
+                ]),
             ],
         ])
         ->add('country', CountryType::class, [
@@ -76,15 +101,21 @@ class ProfileFormType extends AbstractType
             'placeholder' => 'Votre pays',
             'preferred_choices' => ['FR'],
             'constraints' => [
-                new Assert\NotBlank(),
-                new Assert\Length(['max' => 50]),
+                new Assert\NotBlank(['message' => 'Veuillez sélectionner un pays.']),
+                new Assert\Length([
+                    'max' => 50,
+                    'maxMessage' => 'Le nom du pays ne peut pas dépasser {{ limit }} caractères.',
+                ]),
             ],
         ])
         ->add('description', TextareaType::class, [
             'label' => 'Bio',
             'required' => false,
             'constraints' => [
-                new Assert\Length(['max' => 2000]),
+                new Assert\Length([
+                    'max' => 2000,
+                    'maxMessage' => 'La bio ne peut pas dépasser {{ limit }} caractères.',
+                ]),
             ],
         ])
         ->add('birthday', DateType::class, [
