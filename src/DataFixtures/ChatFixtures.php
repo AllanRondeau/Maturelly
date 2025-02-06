@@ -25,7 +25,7 @@ class ChatFixtures extends Fixture implements DependentFixtureInterface
             throw new \Exception('Il n\'y a pas assez d\'utilisateurs féminins pour créer 10 chats.');
         }
 
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 0; $i < 10; ++$i) {
             $user2 = $femaleUsers[array_rand($femaleUsers)];
 
             $chat = new Chat();
@@ -37,6 +37,7 @@ class ChatFixtures extends Fixture implements DependentFixtureInterface
 
         $manager->flush();
     }
+
     public function getDependencies(): array
     {
         return [

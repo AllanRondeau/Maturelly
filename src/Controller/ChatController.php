@@ -2,20 +2,19 @@
 
 namespace App\Controller;
 
+use App\Entity\Chat;
 use App\Entity\Message;
+use App\Entity\User;
 use App\Form\MessageType;
 use App\Repository\MessageRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mercure\HubInterface;
 use Symfony\Component\Mercure\Update;
 use Symfony\Component\Routing\Attribute\Route;
-
-use App\Entity\Chat;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Serializer\SerializerInterface;
 
 final class ChatController extends AbstractController
 {
@@ -49,8 +48,8 @@ final class ChatController extends AbstractController
         Request $request,
         MessageRepository $messageRepository,
         HubInterface $hub,
-        SerializerInterface $serializer
     ): Response {
+        /** @var User $user */
         $user = $security->getUser();
         if (!$user) {
             throw $this->createAccessDeniedException('Vous devez être connecté pour voir vos chats.');
@@ -79,7 +78,9 @@ final class ChatController extends AbstractController
                 'id' => $message->getId(),
                 'content' => $message->getContent(),
                 'sender' => [
+                    /* @var User $user */
                     'id' => $user->getId()->toString(),
+                    /* @var User $user */
                     'email' => $user->getEmail(),
                 ],
                 'createdAt' => $message->getCreatedAt()->format('Y-m-d H:i:s'),
@@ -93,13 +94,13 @@ final class ChatController extends AbstractController
 
                 $hub->publish($update);
             } catch (\Exception $e) {
-                $this->addFlash('error', 'Erreur lors de la publication: ' . $e->getMessage());
+                $this->addFlash('error', 'Erreur lors de la publication: '.$e->getMessage());
             }
 
             if ($request->isXmlHttpRequest()) {
                 return $this->json([
                     'success' => true,
-                    'message' => $messageData
+                    'message' => $messageData,
                 ]);
             }
 
@@ -114,4 +115,3 @@ final class ChatController extends AbstractController
         ]);
     }
 }
-

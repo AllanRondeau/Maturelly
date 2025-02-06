@@ -17,17 +17,17 @@ class HobbyFormType extends AbstractType
                 'label' => ' ',
                 'attr' => [
                     'placeholder' => 'Un loisir...',
-                    'class' => 'bg-transparent border border-white rounded-sm px-2 py-1 text-xl md:text-md'
+                    'class' => 'bg-transparent border border-white rounded-sm px-2 py-1 text-xl md:text-md',
                 ],
                 'constraints' => [
                     new Assert\NotBlank([
-                        'message' => 'Le loisir ne peut pas être vide.'
+                        'message' => 'Le loisir ne peut pas être vide.',
                     ]),
                     new Assert\Length([
                         'max' => 50,
-                        'maxMessage' => 'Le loisir ne peut pas dépasser 50 caractères.'
-                    ])
-                ]
+                        'maxMessage' => 'Le loisir ne peut pas dépasser 50 caractères.',
+                    ]),
+                ],
             ])
         ;
     }

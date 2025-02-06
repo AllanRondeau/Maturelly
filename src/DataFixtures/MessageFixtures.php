@@ -18,7 +18,7 @@ class MessageFixtures extends Fixture implements DependentFixtureInterface
         $chats = $manager->getRepository(Chat::class)->findAll();
 
         foreach ($chats as $chat) {
-            for ($i = 0; $i < 10; $i++) {
+            for ($i = 0; $i < 10; ++$i) {
                 $message = new Message();
                 $message->setChat($chat);
 
@@ -35,10 +35,6 @@ class MessageFixtures extends Fixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    /**
-     *
-     * @return array
-     */
     public function getDependencies(): array
     {
         return [
