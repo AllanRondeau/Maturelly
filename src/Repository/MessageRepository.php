@@ -16,6 +16,7 @@ class MessageRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Message::class);
     }
+
     public function findByChatOrdered(Chat $chat): array
     {
         return $this->createQueryBuilder('m')

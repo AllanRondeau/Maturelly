@@ -8,7 +8,6 @@ use App\Form\ProfileFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -16,13 +15,12 @@ use Symfony\Component\Uid\Uuid;
 
 class ProfileController extends AbstractController
 {
-
-    #[Route ('/profile/{code?}', name: 'app_profile')]
+    #[Route('/profile/{code?}', name: 'app_profile')]
     public function profile(?string $code, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
 
-        if ($code === null) {
+        if (null === $code) {
             if (!$user) {
                 return $this->redirectToRoute('app_login');
             }
@@ -30,21 +28,21 @@ class ProfileController extends AbstractController
             $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
 
             if (!$profile) {
-                return $this->redirectToRoute('app_profile_edit'); 
+                return $this->redirectToRoute('app_profile_edit');
             }
         } else {
             $profile = $entityManager->getRepository(Profile::class)->findOneBy(['code' => $code]);
-    
+
             if (!$profile) {
                 return $this->redirectToRoute('app_home');
             }
         }
 
-    return $this->render('profile/profile.html.twig', [
-        'profile' => $profile,
-        'IsCurrentUserProfile' => $profile->getUser() === $user,
-    ]);
-}
+        return $this->render('profile/profile.html.twig', [
+            'profile' => $profile,
+            'IsCurrentUserProfile' => $profile->getUser() === $user,
+        ]);
+    }
 
     #[Route('/profile-edit', name: 'app_profile_edit')]
     public function profileCreation(Request $request, EntityManagerInterface $entityManager): Response
@@ -67,11 +65,10 @@ class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
-            //verif du nombre d'images
+            // verif du nombre d'images
             $images = $form->get('images')->getData();
             $existingImagesCount = count($profile->getImages());
-            $newImagesCount = count($images); 
+            $newImagesCount = count($images);
             $maxNbImages = 5;
 
             $nbImageCheck = true;
@@ -80,57 +77,56 @@ class ProfileController extends AbstractController
                 $nbImageCheck = false;
             }
 
-            if ($nbImageCheck){
-
-                //upload des images hors photo de profil
+            if ($nbImageCheck) {
+                // upload des images hors photo de profil
                 if ($images) {
                     foreach ($images as $imageFile) {
                         if ($imageFile instanceof UploadedFile) {
-                            $newFilename = uniqid('', true) . '.' . $imageFile->guessExtension();
-    
+                            $newFilename = uniqid('', true).'.'.$imageFile->guessExtension();
+
                             $imageFile->move(
                                 $this->getParameter('profile_images_directory'),
                                 $newFilename
                             );
-    
+
                             $profileImage = new ProfileImage();
                             $profileImage->setFileName($newFilename);
                             $profileImage->setProfile($profile);
-    
+
                             $entityManager->persist($profileImage);
                         }
                     }
                 }
-    
-                //image de profile
+
+                // image de profile
                 $profilePictureFile = $form->get('profilePicture')->getData();
                 if ($profilePictureFile instanceof UploadedFile) {
                     $oldProfilePicture = $profile->getProfilePicture();
-                    $newProfilePictureFilename = uniqid('', true) . '.' . $profilePictureFile->guessExtension();
-    
-                    //suppr de l'ancienne image de profile
+                    $newProfilePictureFilename = uniqid('', true).'.'.$profilePictureFile->guessExtension();
+
+                    // suppr de l'ancienne image de profile
                     if ($oldProfilePicture) {
-                        $oldFilePath = $this->getParameter('profile_images_directory') . '/' . $oldProfilePicture;
+                        $oldFilePath = $this->getParameter('profile_images_directory').'/'.$oldProfilePicture;
                         if (file_exists($oldFilePath) && is_file($oldFilePath)) {
                             unlink($oldFilePath);
                         }
                     }
-    
-                    //création de la nouvelle
+
+                    // création de la nouvelle
                     $profilePictureFile->move(
                         $this->getParameter('profile_images_directory'),
                         $newProfilePictureFilename
                     );
-    
+
                     $profile->setProfilePicture($newProfilePictureFilename);
                 }
 
                 $uuid = Uuid::v7();
                 $profile->setCode($uuid->toString());
-    
+
                 $entityManager->persist($profile);
                 $entityManager->flush();
-    
+
                 if ($boolNewUser) {
                     return $this->redirectToRoute('app_home');
                 } else {
@@ -155,9 +151,9 @@ class ProfileController extends AbstractController
             throw $this->createNotFoundException('Image not found.');
         }
 
-        $filePath = $this->getParameter('profile_images_directory') . '/' . $profileImage->getFileName();
+        $filePath = $this->getParameter('profile_images_directory').'/'.$profileImage->getFileName();
         if (file_exists($filePath)) {
-            unlink($filePath); 
+            unlink($filePath);
         }
 
         $entityManager->remove($profileImage);

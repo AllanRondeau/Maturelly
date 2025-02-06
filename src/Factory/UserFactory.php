@@ -13,6 +13,7 @@ use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 final class UserFactory extends PersistentProxyObjectFactory
 {
     private UserPasswordHasherInterface $passwordHasher;
+
     public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
         parent::__construct();
@@ -33,7 +34,7 @@ final class UserFactory extends PersistentProxyObjectFactory
     {
         return [
             'email' => self::faker()->unique()->safeEmail(),
-            'gender' => random_int(0,1) === 0 ? Genders::MALE : Genders::FEMALE,
+            'gender' => 0 === random_int(0, 1) ? Genders::MALE : Genders::FEMALE,
             'password' => 'passsword',
             'roles' => ['ROLE_USER'],
         ];

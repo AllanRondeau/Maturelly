@@ -14,12 +14,13 @@ final class HomeController extends AbstractController
     public function index(EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser();
-        if ($user){
+        if ($user) {
             $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
             if (!$profile) {
                 return $this->redirectToRoute('app_profile_edit');
             }
         }
+
         return $this->render('home/index.html.twig');
     }
 }
