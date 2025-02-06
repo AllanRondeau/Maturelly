@@ -34,19 +34,35 @@ class SwipeController extends AbstractController
 
     #[Route('/all-profiles', name: 'app_swipe_all_profiles')]
     public function getAllPotentialMatches(): JsonResponse
-    {
-        $currentUser = $this->getUser();
-        $profiles = $this->userRepository->findAllPotentialMatches($currentUser);
-        
-        return $this->json([
-            'profiles' => array_map(fn($user) => [
-                'id' => $user->getId(),
-                'name' => explode('@', $user->getEmail())[0],
-                'gender' => $user->getGender(),
-                'location' => 'Paris, France',
-            ], $profiles)
-        ]);
-    }
+{
+    $currentUser = $this->getUser();
+    $profiles = $this->userRepository->findAllPotentialMatches($currentUser);
+    
+    return $this->json([
+        'profiles' => array_map(function($user) {
+            $profile = $user->getProfile();
+            // Construit l'URL complète pour la photo :
+            $photo = $profile && $profile->getProfilePicture()
+                ? '/uploads/profile_images/' . $profile->getProfilePicture()
+                : '/uploads/profile_images/default.jpg';
+
+            $age = null;
+            if ($profile && $profile->getBirthday()) {
+                $age = $profile->getBirthday()->diff(new \DateTime())->y;
+            }
+
+            return [
+                'id'          => $user->getId(),
+                'name'        => explode('@', $user->getEmail())[0],
+                'gender'      => $user->getGender(),
+                'location'    => 'Paris, France',
+                'description' => $profile ? $profile->getDescription() : '',
+                'photo'       => $photo,
+                'age'         => $age,
+            ];
+        }, $profiles)
+    ]);
+}
 
     #[Route('/like/{id}', name: 'app_swipe_like', methods: ['POST'])]
     public function like(User $targetUser): JsonResponse

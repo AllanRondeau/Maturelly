@@ -52,8 +52,8 @@
        <div id="profile-container" class="max-w-lg mx-auto">
            <div class="profile-card relative">
                <div class="relative rounded-2xl overflow-hidden shadow-2xl bg-white">
-                   <img src="/api/placeholder/400/600" class="w-full h-[600px] object-cover">
-                   
+                <img id="profile-picture" src="" class="w-full h-[600px] object-cover">
+   
                    <!-- Swipe Indicators -->
                    <div class="absolute inset-0 pointer-events-none flex justify-between items-center px-8">
                        <div class="swipe-left-indicator opacity-0 transition-opacity">
@@ -69,11 +69,12 @@
                    </div>
 
                    <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/90 to-transparent">
-                       <h2 class="text-3xl text-white font-bold mb-2" id="profile-name"></h2>
-                       <div class="flex items-center space-x-2 text-white/90">
+                    <h2 class="text-3xl text-white font-bold mb-2" id="profile-name-age"></h2>
+                      <div class="flex items-center space-x-2 text-white/90">
                            <span class="material-icons">place</span>
                            <p id="profile-location"></p>
                        </div>
+                       <p id="profile-description" class="text-white/80 mt-2"></p>
                    </div>
                </div>
                
@@ -168,8 +169,10 @@ function displayCurrentProfile() {
    }
    
    const profile = profiles[currentProfileIndex];
-   document.getElementById('profile-name').textContent = profile.name;
+   document.getElementById('profile-name-age').textContent = `${profile.name}, ${profile.age} ans`;
    document.getElementById('profile-location').textContent = profile.location;
+   document.getElementById('profile-description').textContent = profile.description;
+   document.getElementById('profile-picture').setAttribute('src', profile.photo);
 }
 
 async function handleLike() {
