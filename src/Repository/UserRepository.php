@@ -33,6 +33,33 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findAllPotentialMatches(User $user): array
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.id != :currentUser')
+            ->andWhere('u.gender != :userGender')
+            ->setParameter('currentUser', $user)
+            ->setParameter('userGender', $user->getGender());
+        // je souhaite que l'admin ne figure pas dans les profils
+        if ($user->getRoles() === ['ROLE_ADMIN']) {
+            $qb->andWhere('u.roles != :adminRole')
+                ->setParameter('adminRole', ['ROLE_ADMIN']);
+        }
+
+        $subQuery = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('IDENTITY(l.liked)')
+            ->from('App\Entity\Like', 'l')
+            ->where('l.liker = :currentUser')
+            ->getDQL();
+
+        return $qb
+            ->andWhere($qb->expr()->notIn('u.id', '('.$subQuery.')'))
+            ->setParameter('currentUser', $user)
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

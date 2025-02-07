@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Welcome!{% endblock %}</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     {% block stylesheets %}
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
@@ -18,81 +19,218 @@
     <link href="https://fonts.googleapis.com/css2?family=Antic+Slab&family=Nunito&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
-
 </head>
 <body class="font-nunito bg-secondary h-dvh text-white">
-<nav class="fixed top-0 w-full z-10 bg-secondary text-white px-10 py-2 flex justify-between items-center">
-    <div class="w-2/12">
-        <a href="{{ path('app_home') }}">
-            <img src="{{ asset('assets/img/maturelly-dark-logo.png') }}" alt="maturelly logo" />
-        </a>
-    </div>
+    <nav class="fixed top-0 w-full z-10 bg-secondary text-white px-6 lg:px-10 py-4 shadow-lg">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex justify-between items-center">
+                <!-- Logo -->
+                <div class="w-32 md:w-40">
+                    <a href="{{ path('app_home') }}" class="block">
+                        <img src="{{ asset('assets/img/maturelly-dark-logo.png') }}" alt="maturelly logo" class="w-full" />
+                    </a>
+                </div>
 
-    <ul class="hidden md:flex space-x-6 text-xl">
-        {% if is_granted('ROLE_ADMIN') %}
-            <li><a href="{{ path('admin') }}">Admin</a></li>
-        {% endif %}
-        {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                {% if app.user.profile.profilePicture is defined %}
-                    <li>
-                        {% if app.user.profile.profilePicture is not null %}
-                            <a class="flex flex-row flex-nowrap gap-2 hover:underline" href="{{ path('app_profile') }}"><img src="{{ asset('uploads/profile_images/' ~ app.user.profile.profilePicture) }}" alt="Profile" class="w-10 h-10 rounded-full object-cover"><span>{{ app.user.email }}</span></a>
-                        {% else %}
-                            <a class="flex flex-row flex-nowrap gap-2 hover:underline" href="{{ path('app_profile') }}"><img src="{{ asset('assets/img/profile-default.webp') }}" alt="Profile" class="w-10 h-10 rounded-full object-cover"><span>{{ app.user.email }}</span></a>
+                <!-- Navigation items - Desktop -->
+                <div class="hidden md:flex items-center space-x-8">
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        {% if app.user.profile %}
+                            <a href="{{ path('app_swipe') }}" 
+                               class="text-white hover:text-primary transition-colors duration-200 flex items-center gap-2">
+                                <span class="material-icons">favorite</span>
+                                <span>Découvrir</span>
+                            </a>
+                            
+                            <a href="{{ path('app_chat') }}" 
+                               class="text-white hover:text-primary transition-colors duration-200 flex items-center gap-2">
+                                <span class="material-icons">chat</span>
+                                <span>Messages</span>
+                            </a>
                         {% endif %}
-                    </li>
-                {% endif %}
-            <li>
-                <a href="{{ path('app_logout') }}"
-                   class="text-white border border-primary rounded-sm py-1 px-2 hover:px-3 transition-all duration-200 hover:-mx-1 hover:text-primary">
-                    Déconnexion
-                </a>
-            </li>
-        {% else %}
-            <li>
-                <a href="{{ path('app_login') }}"
-                   class="text-white border border-white rounded-sm py-1 px-2 hover:px-3 transition-all duration-200 hover:-mx-1">
-                    Connexion
-                </a>
-            </li>
-        {% endif %}
-    </ul>
 
-    <button id="burger-menu" class="md:hidden text-3xl">
-        <span class="material-icons">menu</span>
-    </button>
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin') }}" 
+                               class="text-white hover:text-primary transition-colors duration-200 flex items-center gap-2">
+                                <span class="material-icons">admin_panel_settings</span>
+                                <span>Admin</span>
+                            </a>
+                        {% endif %}
 
-    <div id="mobile-menu" class="fixed top-0 left-0 w-full h-full bg-secondary bg-opacity-90 hidden flex-col items-center justify-center space-y-6 text-xl">
-        <button id="close-menu" class="absolute top-4 right-6 text-4xl">
-            <span class="material-icons">close</span>
-        </button>
-        <div class="flex flex-col justify-center items-center h-full">
-            {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('admin') }}">Admin</a>
-            {% endif %}
-            {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
-                <a href="{{ path('app_logout') }}" class="border border-primary rounded-sm py-1 px-4 hover:bg-primary hover:text-white transition">
-                    Déconnexion
-                </a>
-            {% else %}
-                <a href="{{ path('app_login') }}" class="border-b border-white rounded-sm py-1 px-4 hover:bg-white hover:text-gray-900 transition">
-                    Connexion
-                </a>
-            {% endif %}
+                        <!-- Profile Section -->
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2 focus:outline-none">
+                                {% if app.user.profile and app.user.profile.profilePicture %}
+                                    <img src="{{ asset('uploads/profile_images/' ~ app.user.profile.profilePicture) }}" 
+                                         alt="Profile" 
+                                         class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+                                {% else %}
+                                    <img src="{{ asset('assets/img/profile-default.webp') }}" 
+                                         alt="Profile" 
+                                         class="w-10 h-10 rounded-full object-cover border-2 border-primary">
+                                {% endif %}
+                                <span class="material-icons">expand_more</span>
+                            </button>
+
+                            <!-- Dropdown Menu -->
+                            <div class="absolute right-0 mt-2 w-48 bg-secondary border border-gray-700 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+                                {% if app.user.profile %}
+                                    <a href="{{ path('app_profile') }}" 
+                                       class="block px-4 py-2 hover:bg-gray-700 transition-colors duration-200">
+                                        Mon profil
+                                    </a>
+                                {% else %}
+                                    <a href="{{ path('app_profile_edit') }}" 
+                                       class="block px-4 py-2 hover:bg-gray-700 transition-colors duration-200">
+                                        Créer mon profil
+                                    </a>
+                                {% endif %}
+                                
+                                <a href="{{ path('app_logout') }}" 
+                                   class="block px-4 py-2 hover:bg-gray-700 text-primary transition-colors duration-200">
+                                    Déconnexion
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="space-x-4">
+                            <a href="{{ path('app_login') }}" 
+                               class="px-4 py-2 border border-primary text-primary rounded hover:bg-primary hover:text-white transition-all duration-200">
+                                Connexion
+                            </a>
+                            <a href="{{ path('app_register') }}" 
+                               class="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90 transition-all duration-200">
+                                Inscription
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Mobile menu button -->
+                <button id="burger-menu" class="md:hidden text-3xl focus:outline-none">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
         </div>
-    </div>
-</nav>
 
-{% block body %}{% endblock %}
-{% block scripts %}{% endblock %}
+        <!-- Mobile menu -->
+        <div id="mobile-menu" class="fixed inset-0 bg-secondary/95 hidden md:hidden">
+            <div class="h-full flex flex-col">
+                <div class="p-4 flex justify-end">
+                    <button id="close-menu" class="text-3xl focus:outline-none">
+                        <span class="material-icons">close</span>
+                    </button>
+                </div>
+
+                <div class="flex-1 flex flex-col items-center justify-center space-y-8 text-xl">
+                    {% if is_granted('IS_AUTHENTICATED_REMEMBERED') %}
+                        {% if app.user.profile %}
+                            <!-- Profile Info -->
+                            <div class="flex flex-col items-center space-y-4 mb-8">
+                                {% if app.user.profile.profilePicture %}
+                                    <img src="{{ asset('uploads/profile_images/' ~ app.user.profile.profilePicture) }}" 
+                                         alt="Profile" 
+                                         class="w-20 h-20 rounded-full object-cover border-4 border-primary">
+                                {% else %}
+                                    <img src="{{ asset('assets/img/profile-default.webp') }}" 
+                                         alt="Profile" 
+                                         class="w-20 h-20 rounded-full object-cover border-4 border-primary">
+                                {% endif %}
+                                <span class="text-lg">{{ app.user.email }}</span>
+                            </div>
+
+                            <a href="{{ path('app_swipe') }}" class="flex items-center space-x-2">
+                                <span class="material-icons">favorite</span>
+                                <span>Découvrir</span>
+                            </a>
+
+                            <a href="{{ path('app_chat') }}" class="flex items-center space-x-2">
+                                <span class="material-icons">chat</span>
+                                <span>Messages</span>
+                            </a>
+
+                            <a href="{{ path('app_profile') }}" class="flex items-center space-x-2">
+                                <span class="material-icons">person</span>
+                                <span>Mon profil</span>
+                            </a>
+                        {% else %}
+                            <a href="{{ path('app_profile_edit') }}" class="flex items-center space-x-2">
+                                <span class="material-icons">person_add</span>
+                                <span>Créer mon profil</span>
+                            </a>
+                        {% endif %}
+
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('admin') }}" class="flex items-center space-x-2">
+                                <span class="material-icons">admin_panel_settings</span>
+                                <span>Admin</span>
+                            </a>
+                        {% endif %}
+
+                        <a href="{{ path('app_logout') }}" 
+                           class="mt-8 px-6 py-2 border border-primary text-primary rounded-full hover:bg-primary hover:text-white transition-colors duration-200">
+                            Déconnexion
+                        </a>
+                    {% else %}
+                        <div class="flex flex-col space-y-4">
+                            <a href="{{ path('app_login') }}" 
+                               class="px-8 py-3 border border-primary text-primary rounded-full hover:bg-primary hover:text-white transition-all duration-200">
+                                Connexion
+                            </a>
+                            <a href="{{ path('app_register') }}" 
+                               class="px-8 py-3 bg-primary text-white rounded-full hover:bg-primary/90 transition-all duration-200">
+                                Inscription
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Flash Messages -->
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="fixed top-20 right-4 z-50 max-w-sm bg-white text-gray-900 rounded-lg shadow-lg border-l-4 border-{{ label == 'success' ? 'green' : label == 'error' ? 'red' : 'yellow' }}-500 p-4">
+                <div class="flex items-center">
+                    <span class="material-icons text-{{ label == 'success' ? 'green' : label == 'error' ? 'red' : 'yellow' }}-500 mr-3">
+                        {{ label == 'success' ? 'check_circle' : label == 'error' ? 'error' : 'warning' }}
+                    </span>
+                    <p>{{ message }}</p>
+                </div>
+            </div>
+        {% endfor %}
+    {% endfor %}
+
+    <main class="pt-20">
+        {% block body %}{% endblock %}
+    </main>
+
+    {% block scripts %}{% endblock %}
+
+    <script>
+        document.getElementById('burger-menu')?.addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        });
+
+        document.getElementById('close-menu')?.addEventListener('click', function() {
+            document.getElementById('mobile-menu').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        });
+
+        // Auto-hide flash messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const flashMessages = document.querySelectorAll('[class*="flash-"]');
+            flashMessages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    message.style.transition = 'opacity 0.5s ease-out';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, 5000);
+            });
+        });
+    </script>
 </body>
-<script>
-  document.getElementById('burger-menu').addEventListener('click', function () {
-    document.getElementById('mobile-menu').classList.remove('hidden');
-  });
-
-  document.getElementById('close-menu').addEventListener('click', function () {
-    document.getElementById('mobile-menu').classList.add('hidden');
-  });
-</script>
 </html>
