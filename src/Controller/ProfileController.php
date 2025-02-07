@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Chat;
 use App\Entity\Profile;
 use App\Entity\ProfileImage;
+use App\Entity\User;
 use App\Form\ProfileFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,36 +13,45 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Uid\Uuid;
 
 class ProfileController extends AbstractController
 {
-    #[Route('/profile/{code?}', name: 'app_profile')]
-    public function profile(?string $code, EntityManagerInterface $entityManager): Response
+    #[Route('/profile/{id?}', name: 'app_profile')]
+    public function profile(?User $user, EntityManagerInterface $entityManager): Response
     {
-        $user = $this->getUser();
+        $currentUser = $this->getUser();
+        $chat = "";
 
-        if (null === $code) {
-            if (!$user) {
+        if (null === $user) {
+            if (!$currentUser) {
                 return $this->redirectToRoute('app_login');
             }
-
-            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
+            
+            //pas d'id dans l'url = on recup le profile de l'utilisateur connecté
+            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $currentUser]);
 
             if (!$profile) {
                 return $this->redirectToRoute('app_profile_edit');
             }
         } else {
-            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['code' => $code]);
+            //profile d'un autre utilisateur
+            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
 
             if (!$profile) {
                 return $this->redirectToRoute('app_home');
+            }
+            
+            //recup du chat pour le bouton retour
+            $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user1' => $user, 'user2' => $currentUser]);
+            if ($chat === null) {
+                $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user2' => $user, 'user1' => $currentUser]);
             }
         }
 
         return $this->render('profile/profile.html.twig', [
             'profile' => $profile,
-            'IsCurrentUserProfile' => $profile->getUser() === $user,
+            'IsCurrentUserProfile' => $profile->getUser() === $currentUser,
+            'chatId' => $chat->getId(),
         ]);
     }
 
@@ -120,9 +131,6 @@ class ProfileController extends AbstractController
 
                     $profile->setProfilePicture($newProfilePictureFilename);
                 }
-
-                $uuid = Uuid::v7();
-                $profile->setCode($uuid->toString());
 
                 $entityManager->persist($profile);
                 $entityManager->flush();
