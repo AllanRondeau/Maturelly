@@ -10,7 +10,7 @@
                 <a href="{{ path('app_profile_edit') }}" class="text-xl border rounded-md border-primary px-2 py-1 hover:px-3 hover:py-1 hover:-mx-1 transition-all duration-200">Modifier le profil</a>
             {% else %}
                 {% if chatId != "" %}
-                    <a href="{{ path('app_chat_show', {id: chatId}) }}" class="text-xl border rounded-md border-primary px-2 py-1 hover:px-3 hover:py-1 hover:-mx-1 transition-all duration-200">Retour</a>
+                    <a href="{{ path('app_chat_show', {id: chatId}) }}" class="text-xl border rounded-md border-primary px-2 py-1 hover:px-3 hover:py-1 hover:-mx-1 transition-all duration-200">Chat</a>
                 {% endif %}
             {% endif %}
         </div>
