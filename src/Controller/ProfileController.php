@@ -20,7 +20,7 @@ class ProfileController extends AbstractController
     public function profile(?User $user, EntityManagerInterface $entityManager): Response
     {
         $currentUser = $this->getUser();
-        $chat = "";
+        $chatId = "";
 
         if (null === $user) {
             if (!$currentUser) {
@@ -43,15 +43,14 @@ class ProfileController extends AbstractController
             
             //recup du chat pour le bouton retour
             $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user1' => $user, 'user2' => $currentUser]);
-            if ($chat === null) {
-                $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user2' => $user, 'user1' => $currentUser]);
-            }
+            $chat === null ? $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user2' => $user, 'user1' => $currentUser]) : null;
+            $chat !== null ? $chatId = $chat->getId() : null;
         }
 
         return $this->render('profile/profile.html.twig', [
             'profile' => $profile,
             'IsCurrentUserProfile' => $profile->getUser() === $currentUser,
-            'chatId' => $chat->getId(),
+            'chatId' => $chatId,
         ]);
     }
 
