@@ -43,7 +43,7 @@ class NotificationRepository extends ServiceEntityRepository
     public function markAllAsRead(User $user): void
     {
         $qb = $this->createQueryBuilder('n');
-        
+
         $qb->update()
            ->set('n.isRead', true)
            ->where($qb->expr()->eq('n.user', ':user'))
@@ -57,7 +57,7 @@ class NotificationRepository extends ServiceEntityRepository
     public function deleteOldNotifications(User $user, \DateTime $before): void
     {
         $qb = $this->createQueryBuilder('n');
-        
+
         $qb->delete()
            ->where($qb->expr()->eq('n.user', ':user'))
            ->andWhere($qb->expr()->lt('n.createdAt', ':before'))

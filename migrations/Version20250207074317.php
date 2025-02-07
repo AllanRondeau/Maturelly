@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250206091005 extends AbstractMigration
+final class Version20250207074317 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -31,7 +31,7 @@ final class Version20250206091005 extends AbstractMigration
         $this->addSql('COMMENT ON COLUMN chat.user2_id IS \'(DC2Type:uuid)\'');
         $this->addSql('CREATE TABLE hobby (id SERIAL NOT NULL, profile_id INT NOT NULL, name VARCHAR(255) NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_3964F337CCFA12B8 ON hobby (profile_id)');
-        $this->addSql('CREATE TABLE "like" (id UUID NOT NULL, liker_id UUID NOT NULL, liked_id UUID NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, is_match BOOLEAN DEFAULT false NOT NULL, is_like BOOLEAN DEFAULT true NOT NULL, PRIMARY KEY(id))');
+        $this->addSql('CREATE TABLE "like" (id UUID NOT NULL, liker_id UUID NOT NULL, liked_id UUID NOT NULL, created_at TIMESTAMP(0) WITHOUT TIME ZONE NOT NULL, is_like BOOLEAN DEFAULT true NOT NULL, PRIMARY KEY(id))');
         $this->addSql('CREATE INDEX IDX_AC6340B3979F103A ON "like" (liker_id)');
         $this->addSql('CREATE INDEX IDX_AC6340B3E2ED1879 ON "like" (liked_id)');
         $this->addSql('COMMENT ON COLUMN "like".id IS \'(DC2Type:uuid)\'');

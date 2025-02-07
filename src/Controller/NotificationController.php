@@ -12,8 +12,9 @@ class NotificationController extends AbstractController
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private NotificationRepository $notificationRepository
-    ) {}
+        private NotificationRepository $notificationRepository,
+    ) {
+    }
 
     #[Route('/notifications', name: 'app_notifications_list')]
     public function list(): JsonResponse
@@ -24,14 +25,14 @@ class NotificationController extends AbstractController
         );
 
         return $this->json([
-            'notifications' => array_map(function($notification) {
+            'notifications' => array_map(function ($notification) {
                 return [
                     'id' => $notification->getId(),
                     'type' => $notification->getType(),
                     'message' => $notification->getMessage(),
-                    'createdAt' => $notification->getCreatedAt()->format('c')
+                    'createdAt' => $notification->getCreatedAt()->format('c'),
                 ];
-            }, $notifications)
+            }, $notifications),
         ]);
     }
 

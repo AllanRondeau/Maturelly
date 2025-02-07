@@ -50,16 +50,16 @@ class Like
 
     public function setLiker(?User $liker): static
     {
-        if ($this->liker !== null && $this->liker !== $liker) {
+        if (null !== $this->liker && $this->liker !== $liker) {
             $this->liker->getSentLikes()->removeElement($this);
         }
-        
+
         $this->liker = $liker;
-        
-        if ($liker !== null && !$liker->getSentLikes()->contains($this)) {
+
+        if (null !== $liker && !$liker->getSentLikes()->contains($this)) {
             $liker->getSentLikes()->add($this);
         }
-        
+
         return $this;
     }
 
@@ -70,16 +70,16 @@ class Like
 
     public function setLiked(?User $liked): static
     {
-        if ($this->liked !== null && $this->liked !== $liked) {
+        if (null !== $this->liked && $this->liked !== $liked) {
             $this->liked->getReceivedLikes()->removeElement($this);
         }
-        
+
         $this->liked = $liked;
-        
-        if ($liked !== null && !$liked->getReceivedLikes()->contains($this)) {
+
+        if (null !== $liked && !$liked->getReceivedLikes()->contains($this)) {
             $liked->getReceivedLikes()->add($this);
         }
-        
+
         return $this;
     }
 
@@ -91,6 +91,7 @@ class Like
     public function setCreatedAt(\DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
+
         return $this;
     }
 
@@ -102,6 +103,7 @@ class Like
     public function setIsLike(bool $isLike): static
     {
         $this->isLike = $isLike;
+
         return $this;
     }
 }

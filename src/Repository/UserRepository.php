@@ -8,8 +8,6 @@ use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
-use Doctrine\ORM\Query\ResultSetMapping;
-
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -36,33 +34,31 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     public function findAllPotentialMatches(User $user): array
-{
-    $qb = $this->createQueryBuilder('u')
-        ->where('u.id != :currentUser')
-        ->andWhere('u.gender != :userGender')
-        ->setParameter('currentUser', $user)
-        ->setParameter('userGender', $user->getGender());
+    {
+        $qb = $this->createQueryBuilder('u')
+            ->where('u.id != :currentUser')
+            ->andWhere('u.gender != :userGender')
+            ->setParameter('currentUser', $user)
+            ->setParameter('userGender', $user->getGender());
         // je souhaite que l'admin ne figure pas dans les profils
         if ($user->getRoles() === ['ROLE_ADMIN']) {
             $qb->andWhere('u.roles != :adminRole')
                 ->setParameter('adminRole', ['ROLE_ADMIN']);
         }
 
-    $subQuery = $this->getEntityManager()
-        ->createQueryBuilder()
-        ->select('IDENTITY(l.liked)')
-        ->from('App\Entity\Like', 'l')
-        ->where('l.liker = :currentUser')
-        ->getDQL();
+        $subQuery = $this->getEntityManager()
+            ->createQueryBuilder()
+            ->select('IDENTITY(l.liked)')
+            ->from('App\Entity\Like', 'l')
+            ->where('l.liker = :currentUser')
+            ->getDQL();
 
-    return $qb
-        ->andWhere($qb->expr()->notIn('u.id', '(' . $subQuery . ')'))
-        ->setParameter('currentUser', $user)
-        ->getQuery()
-        ->getResult();
-}
-    
-
+        return $qb
+            ->andWhere($qb->expr()->notIn('u.id', '('.$subQuery.')'))
+            ->setParameter('currentUser', $user)
+            ->getQuery()
+            ->getResult();
+    }
 
     //    /**
     //     * @return User[] Returns an array of User objects

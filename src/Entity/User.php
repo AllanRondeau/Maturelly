@@ -2,19 +2,18 @@
 
 namespace App\Entity;
 
-use App\Enum\Genders;
-use Doctrine\DBAL\Types\Types;
-use Symfony\Component\Uid\Uuid;
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\UserRepository;
 use App\Entity\Traits\TimestampableTrait;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Bridge\Doctrine\Types\UuidType;
+use App\Enum\Genders;
+use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\IdGenerator\UuidGenerator;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Uid\Uuid;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '"user"')]
@@ -71,7 +70,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(targetEntity: Like::class, mappedBy: 'liked')]
     private Collection $receivedLikes;
 
-
     #[ORM\Column(enumType: Genders::class)]
     private ?Genders $gender = null;
 
@@ -96,6 +94,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setEmail(string $email): static
     {
         $this->email = $email;
+
         return $this;
     }
 
@@ -121,6 +120,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         $roles[] = 'ROLE_USER';
+
         return array_unique($roles);
     }
 
@@ -130,6 +130,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setRoles(array $roles): static
     {
         $this->roles = $roles;
+
         return $this;
     }
 
@@ -141,6 +142,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setPassword(string $password): static
     {
         $this->password = $password;
+
         return $this;
     }
 
@@ -162,6 +164,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->chats->add($chat);
             $chat->setUser1($this);
         }
+
         return $this;
     }
 
@@ -172,6 +175,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $chat->setUser1(null);
             }
         }
+
         return $this;
     }
 
@@ -189,6 +193,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->messages->add($message);
             $message->setSender($this);
         }
+
         return $this;
     }
 
@@ -199,6 +204,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $message->setSender(null);
             }
         }
+
         return $this;
     }
 
@@ -216,6 +222,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->sentLikes->add($like);
             $like->setLiker($this);
         }
+
         return $this;
     }
 
@@ -226,6 +233,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $like->setLiker(null);
             }
         }
+
         return $this;
     }
 
@@ -243,6 +251,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $this->receivedLikes->add($like);
             $like->setLiked($this);
         }
+
         return $this;
     }
 
@@ -253,6 +262,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $like->setLiked(null);
             }
         }
+
         return $this;
     }
 
@@ -281,6 +291,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setGender(Genders $gender): static
     {
         $this->gender = $gender;
+
         return $this;
     }
 }

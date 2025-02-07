@@ -2,11 +2,11 @@
 
 namespace App\Service;
 
-use App\Entity\User;
-use App\Entity\Like;
 use App\Entity\Chat;
-use App\Repository\LikeRepository;
+use App\Entity\Like;
+use App\Entity\User;
 use App\Repository\ChatRepository;
+use App\Repository\LikeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 class MatchService
@@ -14,8 +14,9 @@ class MatchService
     public function __construct(
         private EntityManagerInterface $entityManager,
         private LikeRepository $likeRepository,
-        private ChatRepository $chatRepository
-    ) {}
+        private ChatRepository $chatRepository,
+    ) {
+    }
 
     public function handleLike(User $liker, User $liked): array
     {
@@ -25,20 +26,17 @@ class MatchService
              ->setIsLike(true);
 
         $this->entityManager->persist($like);
-        
-        // Vérifie s'il y a un match
-        $isMatch = $this->likeRepository->findMatch($liker, $liked) !== null;
-        
+
+        $isMatch = null !== $this->likeRepository->findMatch($liker, $liked);
+        $chat = new Chat();
+
         if ($isMatch) {
-            // Vérifie si un chat existe déjà entre ces utilisateurs
             $existingChat = $this->chatRepository->findChatBetweenUsers($liker, $liked);
-            
+
             if (!$existingChat) {
-                // Crée un nouveau chat
-                $chat = new Chat();
                 $chat->setUser1($liker);
                 $chat->setUser2($liked);
-                
+
                 $this->entityManager->persist($chat);
             }
         }
@@ -47,7 +45,7 @@ class MatchService
 
         return [
             'isMatch' => $isMatch,
-            'chatId' => $isMatch ? ($existingChat ?? $chat)->getId() : null
+            'chatId' => $isMatch ? ($existingChat ?? $chat)->getId() : null,
         ];
     }
 
