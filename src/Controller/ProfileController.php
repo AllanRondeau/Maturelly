@@ -20,31 +20,28 @@ class ProfileController extends AbstractController
     public function profile(?User $user, EntityManagerInterface $entityManager): Response
     {
         $currentUser = $this->getUser();
-        $chatId = "";
+        $chatId = '';
 
         if (null === $user) {
             if (!$currentUser) {
                 return $this->redirectToRoute('app_login');
             }
-            
-            //pas d'id dans l'url = on recup le profile de l'utilisateur connecté
+
             $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $currentUser]);
 
             if (!$profile) {
                 return $this->redirectToRoute('app_profile_edit');
             }
         } else {
-            //profile d'un autre utilisateur
             $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
 
             if (!$profile) {
                 return $this->redirectToRoute('app_home');
             }
-            
-            //recup du chat pour le bouton retour
+
             $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user1' => $user, 'user2' => $currentUser]);
-            $chat === null ? $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user2' => $user, 'user1' => $currentUser]) : null;
-            $chat !== null ? $chatId = $chat->getId() : null;
+            null === $chat ? $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user2' => $user, 'user1' => $currentUser]) : null;
+            null !== $chat ? $chatId = $chat->getId() : null;
         }
 
         return $this->render('profile/profile.html.twig', [
@@ -75,7 +72,6 @@ class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // verif du nombre d'images
             $images = $form->get('images')->getData();
             $existingImagesCount = count($profile->getImages());
             $newImagesCount = count($images);
@@ -88,7 +84,6 @@ class ProfileController extends AbstractController
             }
 
             if ($nbImageCheck) {
-                // upload des images hors photo de profil
                 if ($images) {
                     foreach ($images as $imageFile) {
                         if ($imageFile instanceof UploadedFile) {
@@ -108,13 +103,11 @@ class ProfileController extends AbstractController
                     }
                 }
 
-                // image de profile
                 $profilePictureFile = $form->get('profilePicture')->getData();
                 if ($profilePictureFile instanceof UploadedFile) {
                     $oldProfilePicture = $profile->getProfilePicture();
                     $newProfilePictureFilename = uniqid('', true).'.'.$profilePictureFile->guessExtension();
 
-                    // suppr de l'ancienne image de profile
                     if ($oldProfilePicture) {
                         $oldFilePath = $this->getParameter('profile_images_directory').'/'.$oldProfilePicture;
                         if (file_exists($oldFilePath) && is_file($oldFilePath)) {
@@ -122,7 +115,6 @@ class ProfileController extends AbstractController
                         }
                     }
 
-                    // création de la nouvelle
                     $profilePictureFile->move(
                         $this->getParameter('profile_images_directory'),
                         $newProfilePictureFilename
