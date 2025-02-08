@@ -1,15 +1,39 @@
 {% extends 'base.html.twig' %}
 {% block body %}
 <div class="relative mt-24">
-    <div class="flex justify-center">
-        <h1 class="fixed top-16 flex m-auto justify-center text-3xl">
-            {% if chat.user1.id == app.user.id %}
-                {{ chat.user2.email }}
+    {% set profilePicture = "" %}
+    {% set chatEmail = "" %}
+    {% set profileId = "" %}
+
+    {# premier if pour savoir si user1 ou user2 est l'utilisateur connecté, deuxième if pour savoir si l'autre utilisateur à un profil. Même logique qur sur index.html.twig mais on recup aussi l'email et l'id #}
+    {% if chat.user1.id == app.user.id %}
+
+        {% if chat.user2.profile %}
+            {% set profilePicture = chat.user2.profile.profilePicture %}
+        {% endif %}
+
+        {% set chatEmail = chat.user2.email %}
+        {% set profileId = chat.user2.id %}
+    {% else %}
+
+        {% if chat.user1.profile %}
+            {% set profilePicture = chat.user1.profile.profilePicture %}
+        {% endif %}
+
+        {% set chatEmail = chat.user1.email %}
+        {% set profileId = chat.user1.id %}
+    {% endif %}
+
+    <a href="{{ path('app_profile', {'id': profileId}) }}" class="flex justify-center">
+        <h1 class="fixed top-17 flex m-auto justify-center text-xl sm:text-3xl gap-3">
+            {% if profilePicture != "" %}
+                <img src="{{ asset('uploads/profile_images/' ~ profilePicture) }}" alt="Avatar" class="rounded-full w-10 h-10">
             {% else %}
-                {{ chat.user1.email }}
+                <img src="{{ asset('assets/img/profile-default.webp') }}" alt="Avatar" class="rounded-full w-10 h-10">
             {% endif %}
+            {{ chatEmail }}
         </h1>
-    </div>
+    </a>
 
     <div id="chat-container" class="space-y-4 pb-24 flex flex-col flex-1 h-full overflow-y-auto p-4 rounded-lg shadow-sm">
         {% for message in messages %}

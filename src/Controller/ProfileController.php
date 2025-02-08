@@ -2,8 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\Chat;
 use App\Entity\Profile;
 use App\Entity\ProfileImage;
+use App\Entity\User;
 use App\Form\ProfileFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,36 +13,41 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Uid\Uuid;
 
 class ProfileController extends AbstractController
 {
-    #[Route('/profile/{code?}', name: 'app_profile')]
-    public function profile(?string $code, EntityManagerInterface $entityManager): Response
+    #[Route('/profile/{id?}', name: 'app_profile')]
+    public function profile(?User $user, EntityManagerInterface $entityManager): Response
     {
-        $user = $this->getUser();
+        $currentUser = $this->getUser();
+        $chatId = '';
 
-        if (null === $code) {
-            if (!$user) {
+        if (null === $user) {
+            if (!$currentUser) {
                 return $this->redirectToRoute('app_login');
             }
 
-            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
+            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $currentUser]);
 
             if (!$profile) {
                 return $this->redirectToRoute('app_profile_edit');
             }
         } else {
-            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['code' => $code]);
+            $profile = $entityManager->getRepository(Profile::class)->findOneBy(['user' => $user]);
 
             if (!$profile) {
                 return $this->redirectToRoute('app_home');
             }
+
+            $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user1' => $user, 'user2' => $currentUser]);
+            null === $chat ? $chat = $entityManager->getRepository(Chat::class)->findOneBy(['user2' => $user, 'user1' => $currentUser]) : null;
+            null !== $chat ? $chatId = $chat->getId() : null;
         }
 
         return $this->render('profile/profile.html.twig', [
             'profile' => $profile,
-            'IsCurrentUserProfile' => $profile->getUser() === $user,
+            'IsCurrentUserProfile' => $profile->getUser() === $currentUser,
+            'chatId' => $chatId,
         ]);
     }
 
@@ -65,7 +72,6 @@ class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // verif du nombre d'images
             $images = $form->get('images')->getData();
             $existingImagesCount = count($profile->getImages());
             $newImagesCount = count($images);
@@ -78,7 +84,6 @@ class ProfileController extends AbstractController
             }
 
             if ($nbImageCheck) {
-                // upload des images hors photo de profil
                 if ($images) {
                     foreach ($images as $imageFile) {
                         if ($imageFile instanceof UploadedFile) {
@@ -98,13 +103,11 @@ class ProfileController extends AbstractController
                     }
                 }
 
-                // image de profile
                 $profilePictureFile = $form->get('profilePicture')->getData();
                 if ($profilePictureFile instanceof UploadedFile) {
                     $oldProfilePicture = $profile->getProfilePicture();
                     $newProfilePictureFilename = uniqid('', true).'.'.$profilePictureFile->guessExtension();
 
-                    // suppr de l'ancienne image de profile
                     if ($oldProfilePicture) {
                         $oldFilePath = $this->getParameter('profile_images_directory').'/'.$oldProfilePicture;
                         if (file_exists($oldFilePath) && is_file($oldFilePath)) {
@@ -112,7 +115,6 @@ class ProfileController extends AbstractController
                         }
                     }
 
-                    // création de la nouvelle
                     $profilePictureFile->move(
                         $this->getParameter('profile_images_directory'),
                         $newProfilePictureFilename
@@ -120,9 +122,6 @@ class ProfileController extends AbstractController
 
                     $profile->setProfilePicture($newProfilePictureFilename);
                 }
-
-                $uuid = Uuid::v7();
-                $profile->setCode($uuid->toString());
 
                 $entityManager->persist($profile);
                 $entityManager->flush();

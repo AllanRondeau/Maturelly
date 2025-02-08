@@ -14,7 +14,23 @@
                     <li class="w-full border p-4 rounded-lg shadow-sm hover:shadow-md transition-all">
                         <a href="{{ path('app_chat_show', {'id': chat.id}) }}" class="flex items-center space-x-4">
                             <div class="flex-shrink-0">
-                                <img src="https://via.placeholder.com/40" alt="Avatar" class="rounded-full w-10 h-10">
+                                {% set profilePicture = "" %}
+                                {# premier if pour savoir si user1 ou user2 est l'utilisateur connecté, deuxième if pour savoir si l'autre utilisateur à un profil. Si oui on récup son image de profil, sinon on affiche celle par défaut #}
+                                {% if chat.user1.id == app.user.id %}
+                                    {% if chat.user2.profile %}
+                                        {% set profilePicture = chat.user2.profile.profilePicture %}
+                                    {% endif %}
+                                {% else %}
+                                    {% if chat.user1.profile %}
+                                        {% set profilePicture = chat.user1.profile.profilePicture %}
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if profilePicture != "" %}
+                                    <img src="{{ asset('uploads/profile_images/' ~ profilePicture) }}" alt="Avatar" class="rounded-full w-10 h-10">
+                                {% else %}
+                                    <img src="{{ asset('assets/img/profile-default.webp') }}" alt="Avatar" class="rounded-full w-10 h-10">
+                                {% endif %}
                             </div>
 
                             <div class="flex-1">

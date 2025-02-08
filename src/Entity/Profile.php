@@ -60,9 +60,6 @@ class Profile
     private Collection $images;
 
     #[ORM\Column(length: 255)]
-    private ?string $code = null;
-
-    #[ORM\Column(length: 255)]
     private ?string $postalCode = null;
 
     public function __construct()
@@ -252,18 +249,6 @@ class Profile
                 $image->setProfile(null);
             }
         }
-
-        return $this;
-    }
-
-    public function getCode(): ?string
-    {
-        return $this->code;
-    }
-
-    public function setCode(string $code): static
-    {
-        $this->code = $code;
 
         return $this;
     }
