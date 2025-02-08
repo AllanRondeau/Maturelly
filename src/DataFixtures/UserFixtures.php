@@ -21,20 +21,20 @@ class UserFixtures extends Fixture
             'gender' => Genders::MALE,
             'profile' => ProfileFactory::new(
                 [
-                    'hobbies'=> HobbyFactory::new()->range(0, 10),
-                    'profilePicture' => "spaceman.webp",
+                    'hobbies' => HobbyFactory::new()->range(0, 10),
+                    'profilePicture' => 'spaceman.webp',
                     'description' => "Je suis l'administrateur de Maturelly",
                 ]
             ),
         ]);
 
         $image = new ProfileImage();
-        $image->setFileName("amogusdrip.webp");
+        $image->setFileName('amogusdrip.webp');
         $image->setProfile($user->getProfile());
         $manager->persist($image);
 
         $image = new ProfileImage();
-        $image->setFileName("turtle.webp");
+        $image->setFileName('turtle.webp');
         $image->setProfile($user->getProfile());
         $manager->persist($image);
 
@@ -45,34 +45,34 @@ class UserFixtures extends Fixture
             'gender' => Genders::MALE,
             'profile' => ProfileFactory::new(
                 [
-                    'hobbies'=> HobbyFactory::new()->range(0, 10),
-                    'profilePicture' => "fish.webp",
+                    'hobbies' => HobbyFactory::new()->range(0, 10),
+                    'profilePicture' => 'fish.webp',
                 ]
             ),
         ]);
 
         $image = new ProfileImage();
-        $image->setFileName("man1.webp");
+        $image->setFileName('man1.webp');
         $image->setProfile($user->getProfile());
         $manager->persist($image);
 
         $image = new ProfileImage();
-        $image->setFileName("man2.webp");
+        $image->setFileName('man2.webp');
         $image->setProfile($user->getProfile());
         $manager->persist($image);
 
         $image = new ProfileImage();
-        $image->setFileName("man3.webp");
+        $image->setFileName('man3.webp');
         $image->setProfile($user->getProfile());
         $manager->persist($image);
 
         $image = new ProfileImage();
-        $image->setFileName("man4.webp");
+        $image->setFileName('man4.webp');
         $image->setProfile($user->getProfile());
         $manager->persist($image);
 
         $image = new ProfileImage();
-        $image->setFileName("landscape.webp");
+        $image->setFileName('landscape.webp');
         $image->setProfile($user->getProfile());
         $manager->persist($image);
 
@@ -83,19 +83,19 @@ class UserFixtures extends Fixture
             'gender' => Genders::FEMALE,
             'profile' => ProfileFactory::new(
                 [
-                    'hobbies'=> HobbyFactory::new()->range(0, 10),
-                    'profilePicture' => "woman1.webp",
+                    'hobbies' => HobbyFactory::new()->range(0, 10),
+                    'profilePicture' => 'woman1.webp',
                 ]
             ),
         ]);
 
         $image = new ProfileImage();
-        $image->setFileName("woman2.webp");
+        $image->setFileName('woman2.webp');
         $image->setProfile($user->getProfile());
         $manager->persist($image);
 
         $image = new ProfileImage();
-        $image->setFileName("horsie.webp");
+        $image->setFileName('horsie.webp');
         $image->setProfile($user->getProfile());
         $manager->persist($image);
 

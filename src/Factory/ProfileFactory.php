@@ -31,7 +31,6 @@ final class ProfileFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
-        
         return [
             'firstName' => self::faker()->firstName(),
             'familyName' => self::faker()->lastName(),

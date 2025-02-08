@@ -32,6 +32,10 @@
             </span>
         </p>
 
+        <p class = "text-xl">
+            {{ profile.city }} ({{profile.postalCode}}), {{ profile.region }}, {{ profile.country | country_name }}
+        </p>
+
         {% if profile.description %}
             <p class="text-lg w-4/5 text-center">{{ profile.description | raw }}</p>
         {% endif %}
