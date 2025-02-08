@@ -3,6 +3,7 @@
 namespace App\Factory;
 
 use App\Entity\Profile;
+use Faker\Factory as FakerFactory;
 use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
 
 /**
@@ -31,15 +32,18 @@ final class ProfileFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
+        $faker = FakerFactory::create('fr_FR');
+
         return [
-            'firstName' => self::faker()->firstName(),
-            'familyName' => self::faker()->lastName(),
-            'address' => self::faker()->address(),
-            'city' => self::faker()->city(),
+            'firstName' => $faker->firstName(),
+            'familyName' => $faker->lastName(),
+            'address' => $faker->address(),
+            'city' => $faker->city(),
+            'region' => $faker->region(), // @phpstan-ignore-line
+            'postalCode' => $faker->postcode(),
             'country' => 'FR',
-            'description' => self::faker()->optional()->text(),
-            'birthday' => self::faker()->dateTimeBetween('1920-01-01', '2005-12-31'),
-            'code' => self::faker()->uuid(),
+            'description' => $faker->optional(0.8)->text(),
+            'birthday' => $faker->dateTimeBetween('1920-01-01', '2005-12-31'),
         ];
     }
 

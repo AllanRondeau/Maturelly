@@ -35,7 +35,7 @@ final class UserFactory extends PersistentProxyObjectFactory
         return [
             'email' => self::faker()->unique()->safeEmail(),
             'gender' => 0 === random_int(0, 1) ? Genders::MALE : Genders::FEMALE,
-            'password' => 'passsword',
+            'password' => 'password',
             'roles' => ['ROLE_USER'],
         ];
     }
