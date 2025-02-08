@@ -114,6 +114,13 @@ Si vous ne disposez pas de ces outils, voici comment les installer :
    php bin/console doctrine:fixtures:load
    ```
 
+## Gestion des mails 
+
+   ```bash
+   php bin/console messenger:consume async -vv
+   ```
+(modifier la variable d'environnement DEFAULT_URI si nécessaire)
+
 ## Accéder à l'application
 
 Une fois les services lancés, l'application est accessible à l'adresse :
