@@ -52,7 +52,7 @@ class SwipeController extends AbstractController
                 // Construit l'URL complète pour la photo :
                 $photo = $profile && $profile->getProfilePicture()
                     ? '/uploads/profile_images/'.$profile->getProfilePicture()
-                    : '/uploads/profile_images/default.jpg';
+                    : '/assets/img/profile-default.webp';
 
                 $age = null;
                 if ($profile && $profile->getBirthday()) {
