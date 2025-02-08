@@ -1,9 +1,17 @@
-<h1>Hi!</h1>
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px; height: 100%; width: 100%;">
+    <h1 style="color: red; font-size: 2.5rem; border-bottom: 2px solid #3490dc;">Bonjour</h1>
 
-<p>To reset your password, please visit the following link</p>
+    <p style="color: red;">
+        Pour réinitialiser votre mot de passe, veuillez visiter le lien suivant :
+    </p>
 
-<a href="{{ url('app_reset_password', {token: resetToken.token}) }}">{{ url('app_reset_password', {token: resetToken.token}) }}</a>
+    <a href="{{ absolute_url(url('app_reset_password', {token: resetToken.token})) }}" style="color: #3490dc; text-decoration: underline;">
+        {{ url('app_reset_password', {token: resetToken.token}) }}
+    </a>
 
-<p>This link will expire in {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.</p>
+    <p style="color: red;">
+        Ce lien expirera dans {{ resetToken.expirationMessageKey|trans(resetToken.expirationMessageData, 'ResetPasswordBundle') }}.
+    </p>
 
-<p>Cheers!</p>
+    <p style="color: red;">À bientôt sur Maturelly!</p>
+</div>
