@@ -4,7 +4,13 @@
 
 {% block body %}
     {{ form_start(profileForm, {'attr': {'class': 'flex flex-col justify-center items-center space-y-4 mt-24'}}) }}
-        <h1 class="h3 mb-3 text-white text-6xl sm:text-7xl md:text-5xl border-b border-primary">Créez Votre Profil</h1>
+        <h1 class="h3 mb-3 text-white text-6xl sm:text-7xl md:text-5xl border-b border-primary">
+            {% if isNewUser %}
+                Modifiez Votre Profil
+            {% else %}
+                Créer Votre Profil
+            {% endif %}
+        </h1>
 
         <div>
             {% for error in profileForm.vars.errors %}
