@@ -29,7 +29,7 @@
         </p>
 
         {% if profile.description %}
-            <p class="text-lg w-4/5">{{ profile.description }}</p>
+            <p class="text-lg w-4/5">{{ profile.description | raw }}</p>
         {% endif %}
 
         {% if profile.hobbies|length > 0 %}
