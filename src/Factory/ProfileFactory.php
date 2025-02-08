@@ -39,7 +39,7 @@ final class ProfileFactory extends PersistentProxyObjectFactory
             'familyName' => $faker->lastName(),
             'address' => $faker->address(),
             'city' => $faker->city(),
-            'region' => $faker->region(),
+            'region' => $faker->region(), // @phpstan-ignore-line
             'postalCode' => $faker->postcode(),
             'country' => 'FR',
             'description' => $faker->optional(0.8)->text(),
