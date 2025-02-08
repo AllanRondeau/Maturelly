@@ -121,6 +121,8 @@ Si vous ne disposez pas de ces outils, voici comment les installer :
    ```
 (modifier la variable d'environnement DEFAULT_URI si nécessaire)
 
+Les emails sont accessibles à l'adresse http://localhost:8025/
+
 ## Accéder à l'application
 
 Une fois les services lancés, l'application est accessible à l'adresse :
