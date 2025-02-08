@@ -31,15 +31,17 @@ final class ProfileFactory extends PersistentProxyObjectFactory
      */
     protected function defaults(): array|callable
     {
+        
         return [
             'firstName' => self::faker()->firstName(),
             'familyName' => self::faker()->lastName(),
             'address' => self::faker()->address(),
             'city' => self::faker()->city(),
+            'region' => self::faker()->state(),
+            'postalCode' => self::faker()->postcode(),
             'country' => 'FR',
-            'description' => self::faker()->optional()->text(),
+            'description' => self::faker()->optional(0.8)->text(),
             'birthday' => self::faker()->dateTimeBetween('1920-01-01', '2005-12-31'),
-            'code' => self::faker()->uuid(),
         ];
     }
 

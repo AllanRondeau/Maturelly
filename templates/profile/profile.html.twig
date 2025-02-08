@@ -16,9 +16,9 @@
         </div>
 
         {% if profile.profilePicture %}
-            <img src="{{ asset('uploads/profile_images/' ~ profile.profilePicture) }}" alt="Existing Image" width="350" height="350" class="rounded-sm">
+            <img src="{{ asset('uploads/profile_images/' ~ profile.profilePicture) }}" alt="Image de profil" width="350" height="350" class="rounded-sm object-contain">
         {% else %}
-            <img src="{{ asset('assets/img/profile-default.webp') }}" alt="Default Image" width="350" height="350" class="rounded-sm">
+            <img src="{{ asset('assets/img/profile-default.webp') }}" alt="Image de profil par défaut" width="350" height="350" class="rounded-sm">
         {% endif %}
 
         <p class="text-xl">
@@ -33,7 +33,7 @@
         </p>
 
         {% if profile.description %}
-            <p class="text-lg w-4/5">{{ profile.description | raw }}</p>
+            <p class="text-lg w-4/5 text-center">{{ profile.description | raw }}</p>
         {% endif %}
 
         {% if profile.hobbies|length > 0 %}
@@ -48,7 +48,7 @@
         {% if profile.images|length > 0 %}
             <div class="flex flex-wrap gap-4 justify-center">
                 {% for image in profile.images %}
-                    <img src="{{ asset('uploads/profile_images/' ~ image.fileName) }}" alt="Profile Image" width="500" height="500" class="rounded-md">
+                    <img src="{{ asset('uploads/profile_images/' ~ image.fileName) }}" alt="Image" width="500" height="500" class="object-contain rounded-md">
                 {% endfor %}
             </div>
         {% endif %}
