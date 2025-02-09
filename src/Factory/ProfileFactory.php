@@ -34,10 +34,12 @@ final class ProfileFactory extends PersistentProxyObjectFactory
     {
         $faker = FakerFactory::create('fr_FR');
 
+        $faker = FakerFactory::create('fr_FR');
+
         return [
             'firstName' => $faker->firstName(),
             'familyName' => $faker->lastName(),
-            'address' => $faker->address(),
+            'address' => $faker->streetAddress(),
             'city' => $faker->city(),
             'region' => $faker->region(), // @phpstan-ignore-line
             'postalCode' => $faker->postcode(),

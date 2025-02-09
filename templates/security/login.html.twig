@@ -28,8 +28,11 @@
             <button class="text-xl border rounded-md border-primary px-2 py-1 hover:px-3 hover:py-1 hover:-mx-1 transition-all duration-200" type="submit">
                 Connexion
             </button>
-            <a href="{{ path('app_register') }}" class="text-white underline text-md md:text-xs">
+            <a href="{{ path('app_register') }}" class="text-white underline text-md md:text-xs text-center">
                 Pas encore inscrit? Inscrivez-vous maintenant!
+            </a>
+            <a href="{{ path('app_forgot_password_request') }}" class="text-white underline text-md md:text-xs text-center">
+                Mot de passe oublié?
             </a>
         </div>
     </form>
